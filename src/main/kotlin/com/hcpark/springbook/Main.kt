@@ -25,16 +25,16 @@ fun main(args: Array<String>) {
 //    val userFound = dao.get(user1.id)
 //    println(userFound)
 //
-//    println("hello world")
+    println("hello world")
 
-    val countingCtx = AnnotationConfigApplicationContext(CountingDaoFactory::class.java)
-    val daoWithCountingConnection = countingCtx.getBean("userDao", UserDao::class.java)
-
-    val user2 = User("2", "Park", "123")
-    daoWithCountingConnection.add(user2)
-    val userFound = daoWithCountingConnection.get(user2.id)
-    println(userFound)
-
-    val connectionMaker = countingCtx.getBean("connectionMaker", CountingConnectionMaker::class.java)
-    println(connectionMaker.getConnectionCount())
+//    val countingCtx = AnnotationConfigApplicationContext(CountingDaoFactory::class.java)
+//    val daoWithCountingConnection = countingCtx.getBean("userDao", UserDao::class.java)
+//
+//    val user2 = User("2", "Park", "123")
+//    daoWithCountingConnection.add(user2)
+//    val userFound = daoWithCountingConnection.get(user2.id)
+//    println(userFound)
+//
+//    val connectionMaker = countingCtx.getBean("connectionMaker", CountingConnectionMaker::class.java)
+//    println(connectionMaker.getConnectionCount())
 }
