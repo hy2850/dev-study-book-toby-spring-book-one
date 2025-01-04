@@ -4,7 +4,7 @@ import com.hcpark.springbook.user.domain.User
 import java.sql.Connection
 import java.sql.DriverManager
 
-class UserDao {
+abstract class UserDao {
     fun add(user: User) {
         val c = connection()
 
@@ -44,8 +44,5 @@ class UserDao {
         return user
     }
 
-    private fun connection(): Connection {
-        Class.forName("org.h2.Driver")
-        return DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "")
-    }
+    abstract fun connection(): Connection
 }
