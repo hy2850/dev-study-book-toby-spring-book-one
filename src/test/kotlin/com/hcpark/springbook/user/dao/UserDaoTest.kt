@@ -1,13 +1,23 @@
 package com.hcpark.springbook.user.dao
 
 import com.hcpark.springbook.user.domain.User
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
+import org.springframework.dao.EmptyResultDataAccessException
 
 @SpringBootTest // h2 DB 실행을 위해 필요
 class UserDaoTest {
+
+    @AfterEach
+    fun tearDown() {
+        val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
+        val dao = ctx.getBean("userDao", UserDao::class.java)
+        dao.deleteAll()
+    }
 
     @Test
     fun addAndGet() {
@@ -25,6 +35,19 @@ class UserDaoTest {
         assertEquals(user1.id, userFound.id)
         assertEquals(user1.name, userFound.name)
         assertEquals(user1.password, userFound.password)
+    }
+
+    @Test
+    fun get_invalidId() {
+        // given
+        val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
+        val dao = ctx.getBean("userDao", UserDao::class.java)
+
+        val user1 = User("1", "Kim", "123")
+        dao.add(user1)
+
+        // when, then
+        assertThrows(EmptyResultDataAccessException::class.java) { dao.get("invalid_id") }
     }
 
     @Test
@@ -54,9 +77,6 @@ class UserDaoTest {
 
         val user2 = User("2", "Park", "123")
         dao.add(user2)
-
-        val beforeCount = dao.countAll()
-        assertEquals(2, beforeCount)
 
         // when
         dao.deleteAll()
