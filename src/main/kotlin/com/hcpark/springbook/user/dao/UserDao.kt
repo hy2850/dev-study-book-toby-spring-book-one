@@ -4,9 +4,11 @@ import com.hcpark.springbook.user.domain.User
 import java.sql.Connection
 import java.sql.DriverManager
 
-abstract class UserDao {
+class UserDao {
+    private val simpleConnectionMaker: SimpleConnectionMaker = SimpleConnectionMaker();
+
     fun add(user: User) {
-        val c = connection()
+        val c = simpleConnectionMaker.makeNewConnection()
 
         val ps = c.prepareStatement(
             "insert into users(id, name, password) values(?, ?, ?)"
@@ -22,7 +24,7 @@ abstract class UserDao {
     }
 
     fun get(id: String): User {
-        val c = connection()
+        val c = simpleConnectionMaker.makeNewConnection()
 
         val ps = c.prepareStatement(
             "select * from users where id = ?"
@@ -44,5 +46,8 @@ abstract class UserDao {
         return user
     }
 
-    abstract fun connection(): Connection
+    private fun connection(): Connection {
+        Class.forName("org.h2.Driver")
+        return DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "")
+    }
 }
