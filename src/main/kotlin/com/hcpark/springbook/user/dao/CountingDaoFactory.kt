@@ -3,7 +3,7 @@ package com.hcpark.springbook.user.dao
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-@Configuration
+//@Configuration
 class CountingDaoFactory {
 
     @Bean

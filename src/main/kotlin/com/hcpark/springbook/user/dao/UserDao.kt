@@ -1,8 +1,6 @@
 package com.hcpark.springbook.user.dao
 
 import com.hcpark.springbook.user.domain.User
-import java.sql.Connection
-import java.sql.DriverManager
 
 class UserDao(private val connectionMaker: ConnectionMaker) {
 
