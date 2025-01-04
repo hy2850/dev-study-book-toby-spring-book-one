@@ -4,6 +4,7 @@ import com.hcpark.springbook.user.domain.User
 import org.springframework.dao.EmptyResultDataAccessException
 import java.sql.Connection
 import java.sql.PreparedStatement
+import java.sql.SQLException
 
 class UserDao(private val connectionMaker: ConnectionMaker) {
 
@@ -22,10 +23,19 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
             ps.setString(3, user.password)
 
             ps.executeUpdate()
+        } catch (e: SQLException){
+          throw e
         }
         finally {
-            ps?.close()
-            c?.close()
+            try {
+                ps?.close()
+            } catch (_: SQLException) {
+            }
+
+            try {
+                c?.close()
+            } catch (_: SQLException) {
+            }
         }
     }
 
