@@ -42,4 +42,35 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
 
         return user
     }
+
+    fun countAll(): Int {
+        val c = connectionMaker.makeConnection()
+
+        val ps = c.prepareStatement(
+            "select count(*) from users"
+        )
+
+        val rs = ps.executeQuery()
+        rs.next();
+        val count = rs.getInt(1)
+
+        rs.close()
+        ps.close()
+        c.close()
+
+        return count
+    }
+
+    fun deleteAll() {
+        val c = connectionMaker.makeConnection()
+
+        val ps = c.prepareStatement(
+            "delete from users"
+        )
+
+        ps.execute()
+
+        ps.close()
+        c.close()
+    }
 }
