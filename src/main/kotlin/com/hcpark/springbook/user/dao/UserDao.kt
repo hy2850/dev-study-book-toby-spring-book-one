@@ -2,23 +2,31 @@ package com.hcpark.springbook.user.dao
 
 import com.hcpark.springbook.user.domain.User
 import org.springframework.dao.EmptyResultDataAccessException
+import java.sql.Connection
+import java.sql.PreparedStatement
 
 class UserDao(private val connectionMaker: ConnectionMaker) {
 
     fun add(user: User) {
-        val c = connectionMaker.makeConnection()
+        var c: Connection? = null
+        var ps: PreparedStatement? = null
 
-        val ps = c.prepareStatement(
-            "insert into users(id, name, password) values(?, ?, ?)"
-        )
-        ps.setString(1, user.id)
-        ps.setString(2, user.name)
-        ps.setString(3, user.password)
+        try {
+            c = connectionMaker.makeConnection()
 
-        ps.executeUpdate()
+            ps = c.prepareStatement(
+                "insert into users(id, name, password) values(?, ?, ?)"
+            )
+            ps.setString(1, user.id)
+            ps.setString(2, user.name)
+            ps.setString(3, user.password)
 
-        ps.close()
-        c.close()
+            ps.executeUpdate()
+        }
+        finally {
+            ps?.close()
+            c?.close()
+        }
     }
 
     fun get(id: String): User {
