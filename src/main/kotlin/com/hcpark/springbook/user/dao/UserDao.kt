@@ -44,9 +44,4 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
 
         return user
     }
-
-    private fun connection(): Connection {
-        Class.forName("org.h2.Driver")
-        return DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "")
-    }
 }
