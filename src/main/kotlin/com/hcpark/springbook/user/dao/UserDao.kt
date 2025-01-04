@@ -1,12 +1,12 @@
 package com.hcpark.springbook.user.dao
 
 import com.hcpark.springbook.user.domain.User
+import java.sql.Connection
 import java.sql.DriverManager
 
 class UserDao {
     fun add(user: User) {
-        Class.forName("org.h2.Driver")
-        val c = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "")
+        val c = connection()
 
         val ps = c.prepareStatement(
             "insert into users(id, name, password) values(?, ?, ?)"
@@ -22,8 +22,7 @@ class UserDao {
     }
 
     fun get(id: String): User {
-        Class.forName("org.h2.Driver")
-        val c = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "")
+        val c = connection()
 
         val ps = c.prepareStatement(
             "select * from users where id = ?"
@@ -43,5 +42,10 @@ class UserDao {
         c.close()
 
         return user
+    }
+
+    private fun connection(): Connection {
+        Class.forName("org.h2.Driver")
+        return DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "")
     }
 }
