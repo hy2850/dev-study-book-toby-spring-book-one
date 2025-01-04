@@ -1,6 +1,7 @@
 package com.hcpark.springbook.user.dao
 
 import com.hcpark.springbook.user.domain.User
+import org.springframework.dao.EmptyResultDataAccessException
 
 class UserDao(private val connectionMaker: ConnectionMaker) {
 
@@ -29,18 +30,21 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
         ps.setString(1, id)
 
         val rs = ps.executeQuery()
-        rs.next();
-        val user = User(
-            id = rs.getString("id"),
-            name = rs.getString("name"),
-            password = rs.getString("password")
-        )
+
+        var user: User? = null
+        if (rs.next()) {
+            user = User(
+                id = rs.getString("id"),
+                name = rs.getString("name"),
+                password = rs.getString("password")
+            )
+        }
 
         rs.close()
         ps.close()
         c.close()
 
-        return user
+        return user ?: throw EmptyResultDataAccessException(1)
     }
 
     fun countAll(): Int {
