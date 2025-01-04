@@ -1,3 +1,18 @@
 spring:
   application:
     name: dev-study-book-toby-spring-book-one
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # https://shanepark.tistory.com/435
+    defer-datasource-initialization: true # data.sql? h2 db initialize ?? ??; https://www.inflearn.com/community/questions/224708/h2-db-%EC%9E%90%EB%8F%99-%EC%83%9D%EC%84%B1%EC%97%90-%EA%B4%80%ED%95%B4%EC%84%9C?srsltid=AfmBOoqVRvb_TIk6ex2jz-kehBAdV60sE3Cxh9Lo3-uTyR3W5ZkBxUVN
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
