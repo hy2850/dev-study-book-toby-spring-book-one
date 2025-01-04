@@ -1,5 +1,6 @@
 package com.hcpark.springbook
 
+import com.hcpark.springbook.user.dao.DaoFactory
 import com.hcpark.springbook.user.dao.H2ConnectionMaker
 import com.hcpark.springbook.user.dao.UserDao
 import com.hcpark.springbook.user.domain.User
@@ -12,7 +13,8 @@ class Main
 fun main(args: Array<String>) {
     runApplication<Main>(*args)
 
-    val dao = UserDao(H2ConnectionMaker()) // MySQLConnectionMaker(), MongoConnectionMaker(), ...
+    val daoFactory = DaoFactory()
+    val dao = daoFactory.getUserDao()
 
     val user1 = User("1", "Kim", "123")
     dao.add(user1)
