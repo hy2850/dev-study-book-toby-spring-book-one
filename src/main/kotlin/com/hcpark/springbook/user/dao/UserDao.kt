@@ -5,10 +5,10 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 class UserDao {
-    private val simpleConnectionMaker: SimpleConnectionMaker = SimpleConnectionMaker();
+    private val connectionMaker: ConnectionMaker = H2ConnectionMaker()
 
     fun add(user: User) {
-        val c = simpleConnectionMaker.makeNewConnection()
+        val c = connectionMaker.makeConnection()
 
         val ps = c.prepareStatement(
             "insert into users(id, name, password) values(?, ?, ?)"
@@ -24,7 +24,7 @@ class UserDao {
     }
 
     fun get(id: String): User {
-        val c = simpleConnectionMaker.makeNewConnection()
+        val c = connectionMaker.makeConnection()
 
         val ps = c.prepareStatement(
             "select * from users where id = ?"
