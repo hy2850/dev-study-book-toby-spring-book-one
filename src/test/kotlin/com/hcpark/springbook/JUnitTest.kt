@@ -12,6 +12,9 @@ class JUnitTest {
     @Test
     fun testInstanceCreation1() {
         val currentInstanceHashCode = this.hashCode()
+
+        print("${testObjects.hashCode()}, ${testObjects.size}, ${testObjects}")
+
         if (testObjects.contains(currentInstanceHashCode)) {
             throw AssertionError("Test class instance should be different")
         }
@@ -21,6 +24,9 @@ class JUnitTest {
     @Test
     fun testInstanceCreation2() {
         val currentInstanceHashCode = this.hashCode()
+
+        print("${testObjects.hashCode()}, ${testObjects.size}, ${testObjects}")
+
         if (testObjects.contains(currentInstanceHashCode)) {
             throw AssertionError("Test class instance should be different")
         }
@@ -30,6 +36,9 @@ class JUnitTest {
     @Test
     fun testInstanceCreation3() {
         val currentInstanceHashCode = this.hashCode()
+
+        print("${testObjects.hashCode()}, ${testObjects.size}, ${testObjects}")
+
         if (testObjects.contains(currentInstanceHashCode)) {
             throw AssertionError("Test class instance should be different")
         }
