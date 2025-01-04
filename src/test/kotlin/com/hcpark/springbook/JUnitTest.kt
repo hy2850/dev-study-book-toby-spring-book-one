@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 class JUnitTest {
 
     companion object {
-        private var testObjects: MutableSet<Int> = HashSet()
+        private var testObjects: MutableSet<Int> = mutableSetOf()
     }
 
     @Test
