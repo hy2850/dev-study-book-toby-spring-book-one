@@ -4,11 +4,93 @@ import com.hcpark.springbook.user.domain.User
 import org.springframework.dao.EmptyResultDataAccessException
 import java.sql.Connection
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 import java.sql.SQLException
 
 class UserDao(private val connectionMaker: ConnectionMaker) {
 
     fun add(user: User) {
+        try {
+            connectionMaker.makeConnection().use { conn ->
+                conn.prepareStatement(
+                    "insert into users(id, name, password) values(?, ?, ?)"
+                ).use { ps ->
+                    ps.setString(1, user.id)
+                    ps.setString(2, user.name)
+                    ps.setString(3, user.password)
+
+                    ps.executeUpdate()
+                }
+            }
+        } catch (e: SQLException) {
+            throw RuntimeException("Error while accessing data", e)
+        }
+    }
+
+    fun get(id: String): User {
+        var c: Connection? = null
+        var ps: PreparedStatement? = null
+        var rs: ResultSet? = null
+
+        try {
+            c = connectionMaker.makeConnection()
+
+            ps = c.prepareStatement(
+                "select * from users where id = ?"
+            )
+            ps.setString(1, id)
+
+            rs = ps.executeQuery()
+
+            if (rs.next()) {
+                val user = User(
+                    id = rs.getString("id"),
+                    name = rs.getString("name"),
+                    password = rs.getString("password")
+                )
+                return user
+            }
+
+            throw EmptyResultDataAccessException(1)
+        } catch (e: SQLException){
+            throw e
+        }
+        finally {
+            try {
+                ps?.close()
+            } catch (_: SQLException) {
+            }
+
+            try {
+                c?.close()
+            } catch (_: SQLException) {
+            }
+
+            try {
+                rs?.close()
+            } catch (_: SQLException) {
+            }
+        }
+    }
+
+    fun countAll(): Int {
+        try {
+            connectionMaker.makeConnection().use { conn ->
+                conn.prepareStatement(
+                    "select count(*) from users"
+                ).use { ps ->
+                    ps.executeQuery().use { rs ->
+                        rs.next()
+                        return rs.getInt(1)
+                    }
+                }
+            }
+        } catch (e: SQLException) {
+            throw RuntimeException("Error while accessing data", e)
+        }
+    }
+
+    fun deleteAll() {
         var c: Connection? = null
         var ps: PreparedStatement? = null
 
@@ -16,15 +98,11 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
             c = connectionMaker.makeConnection()
 
             ps = c.prepareStatement(
-                "insert into users(id, name, password) values(?, ?, ?)"
+                "delete from users"
             )
-            ps.setString(1, user.id)
-            ps.setString(2, user.name)
-            ps.setString(3, user.password)
-
-            ps.executeUpdate()
+            ps.execute()
         } catch (e: SQLException){
-          throw e
+            throw e
         }
         finally {
             try {
@@ -37,62 +115,5 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
             } catch (_: SQLException) {
             }
         }
-    }
-
-    fun get(id: String): User {
-        val c = connectionMaker.makeConnection()
-
-        val ps = c.prepareStatement(
-            "select * from users where id = ?"
-        )
-        ps.setString(1, id)
-
-        val rs = ps.executeQuery()
-
-        var user: User? = null
-        if (rs.next()) {
-            user = User(
-                id = rs.getString("id"),
-                name = rs.getString("name"),
-                password = rs.getString("password")
-            )
-        }
-
-        rs.close()
-        ps.close()
-        c.close()
-
-        return user ?: throw EmptyResultDataAccessException(1)
-    }
-
-    fun countAll(): Int {
-        val c = connectionMaker.makeConnection()
-
-        val ps = c.prepareStatement(
-            "select count(*) from users"
-        )
-
-        val rs = ps.executeQuery()
-        rs.next();
-        val count = rs.getInt(1)
-
-        rs.close()
-        ps.close()
-        c.close()
-
-        return count
-    }
-
-    fun deleteAll() {
-        val c = connectionMaker.makeConnection()
-
-        val ps = c.prepareStatement(
-            "delete from users"
-        )
-
-        ps.execute()
-
-        ps.close()
-        c.close()
     }
 }
