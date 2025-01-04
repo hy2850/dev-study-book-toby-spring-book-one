@@ -4,6 +4,7 @@ import com.hcpark.springbook.user.domain.User
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -14,17 +15,12 @@ class UserDaoTest {
 
     @AfterEach
     fun tearDown() {
-        val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = ctx.getBean("userDao", UserDao::class.java)
         dao.deleteAll()
     }
 
     @Test
     fun addAndGet() {
         // given
-        val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = ctx.getBean("userDao", UserDao::class.java)
-
         val user1 = User("1", "Kim", "123")
         dao.add(user1)
 
@@ -40,9 +36,6 @@ class UserDaoTest {
     @Test
     fun get_invalidId() {
         // given
-        val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = ctx.getBean("userDao", UserDao::class.java)
-
         val user1 = User("1", "Kim", "123")
         dao.add(user1)
 
@@ -52,9 +45,6 @@ class UserDaoTest {
 
     @Test
     fun countAll() {
-        val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = ctx.getBean("userDao", UserDao::class.java)
-
         assertEquals(0, dao.countAll())
 
         val user1 = User("1", "Kim", "123")
@@ -69,9 +59,6 @@ class UserDaoTest {
     @Test
     fun deleteAll() {
         // given
-        val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = ctx.getBean("userDao", UserDao::class.java)
-
         val user1 = User("1", "Kim", "123")
         dao.add(user1)
 
@@ -84,5 +71,16 @@ class UserDaoTest {
         // then
         val afterCount = dao.countAll()
         assertEquals(0, afterCount)
+    }
+
+    companion object {
+        private lateinit var dao: UserDao
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
+            dao = ctx.getBean("userDao", UserDao::class.java)
+        }
     }
 }
