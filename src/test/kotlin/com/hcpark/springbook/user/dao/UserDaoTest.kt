@@ -4,14 +4,29 @@ import com.hcpark.springbook.user.domain.User
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.AnnotationConfigApplicationContext
+import org.springframework.context.ApplicationContext
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.test.annotation.DirtiesContext
 
+@DirtiesContext
 @SpringBootTest // h2 DB 실행을 위해 필요
 class UserDaoTest {
+
+    @Autowired
+    private lateinit var ctx: ApplicationContext
+
+    @Autowired
+    private lateinit var dao: UserDao
+
+    @BeforeEach
+    fun beforeEach() {
+        println(this.ctx)
+        println(this)
+    }
 
     @AfterEach
     fun tearDown() {
@@ -73,14 +88,14 @@ class UserDaoTest {
         assertEquals(0, afterCount)
     }
 
-    companion object {
-        private lateinit var dao: UserDao
-
-        @JvmStatic
-        @BeforeAll
-        fun setup() {
-            val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
-            dao = ctx.getBean("userDao", UserDao::class.java)
-        }
-    }
+//    companion object {
+//        private lateinit var dao: UserDao
+//
+//        @JvmStatic
+//        @BeforeAll
+//        fun setup() {
+//            val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
+//            dao = ctx.getBean("userDao", UserDao::class.java)
+//        }
+//    }
 }
