@@ -4,8 +4,7 @@ import com.hcpark.springbook.user.domain.User
 import java.sql.Connection
 import java.sql.DriverManager
 
-class UserDao {
-    private val connectionMaker: ConnectionMaker = H2ConnectionMaker()
+class UserDao(private val connectionMaker: ConnectionMaker) {
 
     fun add(user: User) {
         val c = connectionMaker.makeConnection()
