@@ -4,6 +4,7 @@ import com.hcpark.springbook.user.domain.User
 import com.hcpark.springbook.user.strategy.DeleteAllStatement
 import com.hcpark.springbook.user.strategy.StatementStrategy
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.jdbc.core.JdbcTemplate
 import javax.sql.DataSource
 
 class UserDao(
@@ -11,11 +12,14 @@ class UserDao(
 ) {
 
     private lateinit var jdbcContext: JdbcContext
+    private lateinit var jdbcTemplate: JdbcTemplate
 
     fun setDataSource(dataSource: DataSource) {
         jdbcContext = JdbcContext().apply {
             setDataSource(dataSource)
         }
+
+        jdbcTemplate = JdbcTemplate(dataSource)
     }
 
     fun add(user: User) {
@@ -93,14 +97,16 @@ class UserDao(
     }
 
     fun countAll(): Int {
-        return jdbcContext.workWithStatementStrategyAndResultSet(
-            { connection ->
-                connection.prepareStatement("select count(*) from users")
-            }
-        ) { rs ->
-            rs.next()
-            rs.getInt(1)
-        }
+//        return jdbcContext.workWithStatementStrategyAndResultSet(
+//            { connection ->
+//                connection.prepareStatement("select count(*) from users")
+//            }
+//        ) { rs ->
+//            rs.next()
+//            rs.getInt(1)
+//        }
+
+        return jdbcTemplate.queryForObject("select count(*) from users") { rs, _ -> rs.getInt(1) } ?: 0
     }
 
     fun deleteAll() {
