@@ -5,7 +5,17 @@ import com.hcpark.springbook.user.strategy.DeleteAllStatement
 import com.hcpark.springbook.user.strategy.StatementStrategy
 import org.springframework.dao.EmptyResultDataAccessException
 
-class UserDao(private val jdbcContext: JdbcContext) {
+class UserDao(
+//    private val jdbcContext: JdbcContext,
+) {
+
+    private lateinit var jdbcContext: JdbcContext
+
+    fun setConectionMaker(connectionMaker: ConnectionMaker) {
+        jdbcContext = JdbcContext().apply {
+            setConnectionMaker(connectionMaker)
+        }
+    }
 
     fun add(user: User) {
 //        try {
