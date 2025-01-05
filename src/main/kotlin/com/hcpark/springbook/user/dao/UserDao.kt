@@ -120,4 +120,16 @@ class UserDao(
         val strategy: StatementStrategy = DeleteAllStatement()
         jdbcContext.workWithStatementStrategy(strategy)
     }
+
+    fun update(userToUpdate: User) {
+        jdbcTemplate.update(
+            "update users set name = ?, password = ?, level = ?, loginCnt = ?, recommendCnt = ? where id = ?",
+            userToUpdate.name,
+            userToUpdate.password,
+            userToUpdate.level.value,
+            userToUpdate.loginCnt,
+            userToUpdate.recommendCnt,
+            userToUpdate.id
+        )
+    }
 }

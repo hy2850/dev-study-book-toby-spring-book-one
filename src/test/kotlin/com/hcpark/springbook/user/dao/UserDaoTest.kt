@@ -83,6 +83,33 @@ class UserDaoTest {
         assertEquals(0, afterCount)
     }
 
+    @Test
+    fun update() {
+        // given
+        dao.add(user1)
+
+        val id = user1.id
+
+        val newName = "Lee"
+        val newPassword = "999"
+        val newLevel = Level.BASIC
+        val newLoginCnt = 99
+        val newRecommendCnt = 88
+        val newUser = User(id, newName, newPassword, newLevel, newLoginCnt, newRecommendCnt)
+
+        // when
+        dao.update(newUser)
+
+        // then
+        val userFound = dao.get(id)
+        assertEquals(id, userFound.id)
+        assertEquals(newName, userFound.name)
+        assertEquals(newPassword, userFound.password)
+        assertEquals(newLevel, userFound.level)
+        assertEquals(newLoginCnt, userFound.loginCnt)
+        assertEquals(newRecommendCnt, userFound.recommendCnt)
+    }
+
     companion object {
         private lateinit var user1: User
         private lateinit var user2: User
