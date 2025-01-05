@@ -45,6 +45,9 @@ class UserDaoTest {
         assertEquals(user1.id, userFound.id)
         assertEquals(user1.name, userFound.name)
         assertEquals(user1.password, userFound.password)
+        assertEquals(user1.level, userFound.level)
+        assertEquals(user1.loginCnt, userFound.loginCnt)
+        assertEquals(user1.recommendCnt, userFound.recommendCnt)
     }
 
     @Test

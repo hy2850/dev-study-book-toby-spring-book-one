@@ -1,5 +1,6 @@
 package com.hcpark.springbook.user.dao
 
+import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
 import com.hcpark.springbook.user.strategy.DeleteAllStatement
 import com.hcpark.springbook.user.strategy.StatementStrategy
@@ -66,11 +67,14 @@ class UserDao(
 
         // functional interface
         jdbcContext.workWithStatementStrategy { conn ->
-            conn.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
+            conn.prepareStatement("insert into users(id, name, password, level, loginCnt, recommendCnt) values(?, ?, ?, ?, ?, ?)")
                 .apply {
                     setString(1, user.id)
                     setString(2, user.name)
                     setString(3, user.password)
+                    setInt(4, user.level.value)
+                    setInt(5, user.loginCnt)
+                    setInt(6, user.recommendCnt)
                 }
         }
     }
@@ -88,7 +92,10 @@ class UserDao(
                 User(
                     id = rs.getString("id"),
                     name = rs.getString("name"),
-                    password = rs.getString("password")
+                    password = rs.getString("password"),
+                    level = Level.valueOf(rs.getInt("level")),
+                    loginCnt = rs.getInt("loginCnt"),
+                    recommendCnt = rs.getInt("recommendCnt"),
                 )
             } else {
                 throw EmptyResultDataAccessException(1)
