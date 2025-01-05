@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
 import org.springframework.dao.EmptyResultDataAccessException
-import org.springframework.test.annotation.DirtiesContext
 
-@DirtiesContext
 @SpringBootTest // h2 DB 실행을 위해 필요
 class UserDaoTest {
 
