@@ -1,5 +1,6 @@
 package com.hcpark.springbook.user.dao
 
+import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -86,8 +87,8 @@ class UserDaoTest {
         @JvmStatic
         @BeforeAll
         fun setup() {
-            user1 = User("1", "Kim", "123")
-            user2 = User("2", "Park", "123")
+            user1 = User("1", "Kim", "123", Level.SILVER, 1, 2)
+            user2 = User("2", "Park", "456", Level.GOLD, 3, 4)
         }
     }
 }
