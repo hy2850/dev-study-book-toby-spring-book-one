@@ -43,17 +43,24 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
 //        jdbcContextWithStatementStrategy(strategy)
 
         // anonymous class
-        jdbcContextWithStatementStrategy(
-            object : StatementStrategy {
-                override fun makePreparedStatement(connection: Connection): PreparedStatement {
-                    val ps = connection.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
-                    ps.setString(1, user.id)
-                    ps.setString(2, user.name)
-                    ps.setString(3, user.password)
-                    return ps
-                }
-            }
-        )
+//        jdbcContextWithStatementStrategy(
+//            StatementStrategy { connection ->
+//                    val ps = connection.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
+//                    ps.setString(1, user.id)
+//                    ps.setString(2, user.name)
+//                    ps.setString(3, user.password)
+//                    return ps
+//            }
+//        )
+
+        // functional interface
+        jdbcContextWithStatementStrategy { conn ->
+            val ps = conn.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
+            ps.setString(1, user.id)
+            ps.setString(2, user.name)
+            ps.setString(3, user.password)
+            ps
+        }
     }
 
     fun get(id: String): User {
