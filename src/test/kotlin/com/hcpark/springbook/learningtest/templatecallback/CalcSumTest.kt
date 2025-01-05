@@ -18,6 +18,12 @@ class CalcSumTest {
         assertEquals(24, sum)
     }
 
+    @Test
+    fun concatOfNumbers() {
+        val sum = calculator.calcConcat(numFilePath)
+        assertEquals("1 2 3 4 ", sum)
+    }
+
     companion object {
         private lateinit var calculator: Calculator
         private var numFilePath: String? = null

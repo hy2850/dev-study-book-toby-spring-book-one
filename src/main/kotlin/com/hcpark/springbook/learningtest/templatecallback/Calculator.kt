@@ -5,7 +5,7 @@ import java.io.FileReader
 
 class Calculator {
 
-    fun calcContext(filepath: String?, initVal: Int, callback: NumberReaderCallback): Int {
+    fun <T> calcContext(filepath: String?, initVal: T, callback: LineReaderCallback<T>): T {
         if (filepath == null) {
             throw IllegalArgumentException("Cannot find file")
         }
@@ -15,7 +15,7 @@ class Calculator {
             var line: String?
 
             while (br.readLine().also { line = it } != null) {
-                acc = callback.handleNumber(line!!, acc)
+                acc = callback.handleLine(line!!, acc)
             }
 
             return acc
@@ -31,6 +31,12 @@ class Calculator {
     fun calcMultiply(filepath: String?): Int {
         return calcContext(filepath, 1) { line, mul ->
             mul * Integer.parseInt(line)
+        }
+    }
+
+    fun calcConcat(filepath: String?): String {
+        return calcContext(filepath, "") { line, concat ->
+            "$concat$line "
         }
     }
 }
