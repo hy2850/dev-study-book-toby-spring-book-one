@@ -4,6 +4,7 @@ import com.hcpark.springbook.user.domain.User
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,7 +35,6 @@ class UserDaoTest {
     @Test
     fun addAndGet() {
         // given
-        val user1 = User("1", "Kim", "123")
         dao.add(user1)
 
         // when
@@ -49,7 +49,6 @@ class UserDaoTest {
     @Test
     fun get_invalidId() {
         // given
-        val user1 = User("1", "Kim", "123")
         dao.add(user1)
 
         // when, then
@@ -60,10 +59,7 @@ class UserDaoTest {
     fun countAll() {
         assertEquals(0, dao.countAll())
 
-        val user1 = User("1", "Kim", "123")
         dao.add(user1)
-
-        val user2 = User("2", "Park", "123")
         dao.add(user2)
 
         assertEquals(2, dao.countAll())
@@ -72,10 +68,7 @@ class UserDaoTest {
     @Test
     fun deleteAll() {
         // given
-        val user1 = User("1", "Kim", "123")
         dao.add(user1)
-
-        val user2 = User("2", "Park", "123")
         dao.add(user2)
 
         // when
@@ -86,14 +79,15 @@ class UserDaoTest {
         assertEquals(0, afterCount)
     }
 
-//    companion object {
-//        private lateinit var dao: UserDao
-//
-//        @JvmStatic
-//        @BeforeAll
-//        fun setup() {
-//            val ctx = AnnotationConfigApplicationContext(DaoFactory::class.java)
-//            dao = ctx.getBean("userDao", UserDao::class.java)
-//        }
-//    }
+    companion object {
+        private lateinit var user1: User
+        private lateinit var user2: User
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            user1 = User("1", "Kim", "123")
+            user2 = User("2", "Park", "123")
+        }
+    }
 }
