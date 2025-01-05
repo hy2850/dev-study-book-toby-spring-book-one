@@ -93,21 +93,20 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
     }
 
     fun deleteAll() {
+        val strategy: StatementStrategy = DeleteAllStatement()
+        jdbcContextWithStatementStrategy(strategy)
+    }
+
+    fun jdbcContextWithStatementStrategy(strategy: StatementStrategy) {
         var c: Connection? = null
         var ps: PreparedStatement? = null
 
         try {
             c = connectionMaker.makeConnection()
 
-//            ps = c.prepareStatement(
-//                "delete from users"
-//            )
-//            ps.execute()
-
-            val strategy: StatementStrategy = DeleteAllStatement()
             val ps = strategy.makePreparedStatement(c)
-            ps.execute()
 
+            ps.execute()
         } catch (e: SQLException){
             throw e
         }
