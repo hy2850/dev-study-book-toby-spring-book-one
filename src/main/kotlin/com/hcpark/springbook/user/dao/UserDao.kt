@@ -28,19 +28,32 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
 //            throw RuntimeException("Error while accessing data", e)
 //        }
 
-        // 로컬 클래스, 메소드 안에서만 사용 가능
-        class AddStatement: StatementStrategy {
-            override fun makePreparedStatement(connection: Connection): PreparedStatement {
-                val ps = connection.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
-                ps.setString(1, user.id)
-                ps.setString(2, user.name)
-                ps.setString(3, user.password)
-                return ps
-            }
-        }
+//        // 로컬 클래스, 메소드 안에서만 사용 가능
+//        class AddStatement: StatementStrategy {
+//            override fun makePreparedStatement(connection: Connection): PreparedStatement {
+//                val ps = connection.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
+//                ps.setString(1, user.id)
+//                ps.setString(2, user.name)
+//                ps.setString(3, user.password)
+//                return ps
+//            }
+//        }
+//
+//        val strategy = AddStatement()
+//        jdbcContextWithStatementStrategy(strategy)
 
-        val strategy = AddStatement()
-        jdbcContextWithStatementStrategy(strategy)
+        // anonymous class
+        jdbcContextWithStatementStrategy(
+            object : StatementStrategy {
+                override fun makePreparedStatement(connection: Connection): PreparedStatement {
+                    val ps = connection.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
+                    ps.setString(1, user.id)
+                    ps.setString(2, user.name)
+                    ps.setString(3, user.password)
+                    return ps
+                }
+            }
+        )
     }
 
     fun get(id: String): User {
