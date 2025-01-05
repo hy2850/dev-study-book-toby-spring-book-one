@@ -1,6 +1,7 @@
 package com.hcpark.springbook.user.dao
 
 import com.hcpark.springbook.user.domain.User
+import com.hcpark.springbook.user.strategy.AddStatement
 import com.hcpark.springbook.user.strategy.DeleteAllStatement
 import com.hcpark.springbook.user.strategy.StatementStrategy
 import org.springframework.dao.EmptyResultDataAccessException
@@ -12,21 +13,24 @@ import java.sql.SQLException
 class UserDao(private val connectionMaker: ConnectionMaker) {
 
     fun add(user: User) {
-        try {
-            connectionMaker.makeConnection().use { conn ->
-                conn.prepareStatement(
-                    "insert into users(id, name, password) values(?, ?, ?)"
-                ).use { ps ->
-                    ps.setString(1, user.id)
-                    ps.setString(2, user.name)
-                    ps.setString(3, user.password)
+//        try {
+//            connectionMaker.makeConnection().use { conn ->
+//                conn.prepareStatement(
+//                    "insert into users(id, name, password) values(?, ?, ?)"
+//                ).use { ps ->
+//                    ps.setString(1, user.id)
+//                    ps.setString(2, user.name)
+//                    ps.setString(3, user.password)
+//
+//                    ps.executeUpdate()
+//                }
+//            }
+//        } catch (e: SQLException) {
+//            throw RuntimeException("Error while accessing data", e)
+//        }
 
-                    ps.executeUpdate()
-                }
-            }
-        } catch (e: SQLException) {
-            throw RuntimeException("Error while accessing data", e)
-        }
+        val strategy = AddStatement(user)
+        jdbcContextWithStatementStrategy(strategy)
     }
 
     fun get(id: String): User {
