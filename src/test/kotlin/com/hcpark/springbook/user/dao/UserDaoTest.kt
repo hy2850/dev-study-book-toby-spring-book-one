@@ -42,12 +42,7 @@ class UserDaoTest {
         val userFound = dao.get(user1.id)
 
         // then
-        assertEquals(user1.id, userFound.id)
-        assertEquals(user1.name, userFound.name)
-        assertEquals(user1.password, userFound.password)
-        assertEquals(user1.level, userFound.level)
-        assertEquals(user1.loginCnt, userFound.loginCnt)
-        assertEquals(user1.recommendCnt, userFound.recommendCnt)
+        checkSameUser(userFound, user1)
     }
 
     @Test
@@ -102,12 +97,16 @@ class UserDaoTest {
 
         // then
         val userFound = dao.get(id)
-        assertEquals(id, userFound.id)
-        assertEquals(newName, userFound.name)
-        assertEquals(newPassword, userFound.password)
-        assertEquals(newLevel, userFound.level)
-        assertEquals(newLoginCnt, userFound.loginCnt)
-        assertEquals(newRecommendCnt, userFound.recommendCnt)
+        checkSameUser(userFound, newUser)
+    }
+
+    private fun checkSameUser(user1: User, user2: User) {
+        assertEquals(user1.id, user2.id)
+        assertEquals(user1.name, user2.name)
+        assertEquals(user1.password, user2.password)
+        assertEquals(user1.level, user2.level)
+        assertEquals(user1.loginCnt, user2.loginCnt)
+        assertEquals(user1.recommendCnt, user2.recommendCnt)
     }
 
     companion object {
