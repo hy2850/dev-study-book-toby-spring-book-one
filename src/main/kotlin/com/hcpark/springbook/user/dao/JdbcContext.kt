@@ -14,6 +14,14 @@ class JdbcContext {
         this.connectionMaker = connectionMaker
     }
 
+    fun executeSQL(sql: String) {
+        workWithStatementStrategy(object : StatementStrategy {
+            override fun makePreparedStatement(connection: Connection): PreparedStatement {
+                return connection.prepareStatement(sql)
+            }
+        })
+    }
+
     fun workWithStatementStrategy(strategy: StatementStrategy) {
         commonExceptionHandlerTemplate<Boolean>(strategy)
     }
