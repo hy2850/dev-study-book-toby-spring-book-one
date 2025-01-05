@@ -10,16 +10,15 @@ class Calculator {
             throw IllegalArgumentException("Cannot find file")
         }
 
-        val br = BufferedReader(FileReader(filepath))
+        BufferedReader(FileReader(filepath)).use { br ->
+            var sum = 0
+            var line: String?
 
-        var sum = 0
-        var line: String?
+            while (br.readLine().also { line = it } != null) {
+                sum += Integer.parseInt(line)
+            }
 
-        while (br.readLine().also { line = it } != null) {
-            sum += Integer.parseInt(line)
+            return sum
         }
-
-        br.close()
-        return sum
     }
 }
