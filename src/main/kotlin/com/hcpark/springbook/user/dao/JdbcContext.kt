@@ -5,13 +5,14 @@ import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
+import javax.sql.DataSource
 
 class JdbcContext {
 
-    private lateinit var connectionMaker: ConnectionMaker
+    private lateinit var dataSource: DataSource
 
-    fun setConnectionMaker(connectionMaker: ConnectionMaker) {
-        this.connectionMaker = connectionMaker
+    fun setDataSource(dataSource: DataSource) {
+        this.dataSource = dataSource
     }
 
     fun executeSQL(sql: String) {
@@ -38,7 +39,7 @@ class JdbcContext {
         var ps: PreparedStatement? = null
 
         try {
-            c = connectionMaker.makeConnection()
+            c = dataSource.connection
 
             ps = strategy.makePreparedStatement(c)
 
