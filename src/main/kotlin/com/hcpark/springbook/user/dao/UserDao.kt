@@ -9,7 +9,7 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 
-class UserDao(private val connectionMaker: ConnectionMaker) {
+class UserDao(private val jdbcContext: JdbcContext) {
 
     fun add(user: User) {
 //        try {
@@ -40,10 +40,10 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
 //        }
 //
 //        val strategy = AddStatement()
-//        jdbcContextWithStatementStrategy(strategy)
+//        jdbcContext.workWithStatementStrategy(strategy)
 
         // anonymous class
-//        jdbcContextWithStatementStrategy(
+//        jdbcContext.workWithStatementStrategy(
 //            StatementStrategy { connection ->
 //                    val ps = connection.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
 //                    ps.setString(1, user.id)
@@ -54,7 +54,7 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
 //        )
 
         // functional interface
-        jdbcContextWithStatementStrategy { conn ->
+        jdbcContext.workWithStatementStrategy { conn ->
             val ps = conn.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
             ps.setString(1, user.id)
             ps.setString(2, user.name)
@@ -128,32 +128,6 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
 
     fun deleteAll() {
         val strategy: StatementStrategy = DeleteAllStatement()
-        jdbcContextWithStatementStrategy(strategy)
-    }
-
-    fun jdbcContextWithStatementStrategy(strategy: StatementStrategy) {
-        var c: Connection? = null
-        var ps: PreparedStatement? = null
-
-        try {
-            c = connectionMaker.makeConnection()
-
-            val ps = strategy.makePreparedStatement(c)
-
-            ps.execute()
-        } catch (e: SQLException){
-            throw e
-        }
-        finally {
-            try {
-                ps?.close()
-            } catch (_: SQLException) {
-            }
-
-            try {
-                c?.close()
-            } catch (_: SQLException) {
-            }
-        }
+        jdbcContext.workWithStatementStrategy(strategy)
     }
 }
