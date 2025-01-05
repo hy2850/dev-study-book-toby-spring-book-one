@@ -1,6 +1,8 @@
 package com.hcpark.springbook.user.dao
 
 import com.hcpark.springbook.user.domain.User
+import com.hcpark.springbook.user.strategy.DeleteAllStatement
+import com.hcpark.springbook.user.strategy.StatementStrategy
 import org.springframework.dao.EmptyResultDataAccessException
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -97,10 +99,15 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
         try {
             c = connectionMaker.makeConnection()
 
-            ps = c.prepareStatement(
-                "delete from users"
-            )
+//            ps = c.prepareStatement(
+//                "delete from users"
+//            )
+//            ps.execute()
+
+            val strategy: StatementStrategy = DeleteAllStatement()
+            val ps = strategy.makePreparedStatement(c)
             ps.execute()
+
         } catch (e: SQLException){
             throw e
         }
