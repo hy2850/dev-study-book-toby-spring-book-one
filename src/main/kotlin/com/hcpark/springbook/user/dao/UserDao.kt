@@ -1,7 +1,6 @@
 package com.hcpark.springbook.user.dao
 
 import com.hcpark.springbook.user.domain.User
-import com.hcpark.springbook.user.strategy.AddStatement
 import com.hcpark.springbook.user.strategy.DeleteAllStatement
 import com.hcpark.springbook.user.strategy.StatementStrategy
 import org.springframework.dao.EmptyResultDataAccessException
@@ -29,7 +28,18 @@ class UserDao(private val connectionMaker: ConnectionMaker) {
 //            throw RuntimeException("Error while accessing data", e)
 //        }
 
-        val strategy = AddStatement(user)
+        // 로컬 클래스, 메소드 안에서만 사용 가능
+        class AddStatement: StatementStrategy {
+            override fun makePreparedStatement(connection: Connection): PreparedStatement {
+                val ps = connection.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
+                ps.setString(1, user.id)
+                ps.setString(2, user.name)
+                ps.setString(3, user.password)
+                return ps
+            }
+        }
+
+        val strategy = AddStatement()
         jdbcContextWithStatementStrategy(strategy)
     }
 
