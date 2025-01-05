@@ -4,6 +4,7 @@ import com.hcpark.springbook.user.domain.User
 import com.hcpark.springbook.user.strategy.DeleteAllStatement
 import com.hcpark.springbook.user.strategy.StatementStrategy
 import org.springframework.dao.EmptyResultDataAccessException
+import javax.sql.DataSource
 
 class UserDao(
 //    private val jdbcContext: JdbcContext,
@@ -11,9 +12,9 @@ class UserDao(
 
     private lateinit var jdbcContext: JdbcContext
 
-    fun setConectionMaker(connectionMaker: ConnectionMaker) {
+    fun setDataSource(dataSource: DataSource) {
         jdbcContext = JdbcContext().apply {
-            setConnectionMaker(connectionMaker)
+            setDataSource(dataSource)
         }
     }
 
