@@ -8,7 +8,14 @@ class DaoFactory {
 
     @Bean
     fun userDao(): UserDao {
-        return UserDao(connectionMaker())
+        return UserDao(jdbcContext())
+    }
+
+    @Bean
+    fun jdbcContext(): JdbcContext {
+        val jdbcContext = JdbcContext()
+        jdbcContext.setConnectionMaker(connectionMaker())
+        return jdbcContext
     }
 
     @Bean
