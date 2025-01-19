@@ -55,7 +55,7 @@ class UserServiceTest {
     fun upgradeLevels() {
         users.forEach(dao::add)
 
-        userService.upgradeLevels(users)
+        userService.upgradeLevels()
 
         isLevelUpgradedFrom(userPark, false, Level.BASIC)
         isLevelUpgradedFrom(userKim, true, Level.BASIC)

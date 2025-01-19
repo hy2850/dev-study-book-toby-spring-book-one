@@ -3,8 +3,7 @@ package com.hcpark.springbook.user.dao
 import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -52,6 +51,21 @@ class UserDaoTest {
 
         // when, then
         assertThrows(EmptyResultDataAccessException::class.java) { dao.get("invalid_id") }
+    }
+
+    @Test
+    fun getAll() {
+        // given
+        dao.add(user1)
+        dao.add(user2)
+
+        // when
+        val usersFound = dao.getAll()
+        val idsFound = usersFound.map(User::id).toSet()
+
+        // then
+        assertTrue(idsFound.contains(user1.id))
+        assertTrue(idsFound.contains(user2.id))
     }
 
     @Test
