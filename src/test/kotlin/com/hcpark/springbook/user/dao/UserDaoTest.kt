@@ -82,6 +82,7 @@ class UserDaoTest {
     fun update() {
         // given
         dao.add(user1)
+        dao.add(user2)
 
         val id = user1.id
 
@@ -98,6 +99,9 @@ class UserDaoTest {
         // then
         val userFound = dao.get(id)
         checkSameUser(userFound, newUser)
+
+        val notUpdatedUserFound = dao.get(user2.id)
+        checkSameUser(notUpdatedUserFound, user2)
     }
 
     private fun checkSameUser(user1: User, user2: User) {
