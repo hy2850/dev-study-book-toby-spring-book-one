@@ -1,9 +1,9 @@
 package com.hcpark.springbook.user.domain
 
-enum class Level(val value: Int) {
-    BASIC(1),
-    SILVER(2),
-    GOLD(3);
+enum class Level(val value: Int, val next: Level?) {
+    GOLD(3, GOLD),
+    SILVER(2, GOLD),
+    BASIC(1, SILVER);
 
     companion object {
         fun valueOf(value: Int): Level {
