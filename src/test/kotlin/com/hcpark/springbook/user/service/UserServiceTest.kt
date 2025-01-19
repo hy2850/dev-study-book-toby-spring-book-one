@@ -57,11 +57,11 @@ class UserServiceTest {
 
         userService.upgradeLevels(users)
 
-        checkLevel(userPark, Level.BASIC)
-        checkLevel(userKim, Level.SILVER)
-        checkLevel(userLee, Level.SILVER)
-        checkLevel(userGo, Level.GOLD)
-        checkLevel(userKwon, Level.GOLD)
+        isLevelUpgradedFrom(userPark, false, Level.BASIC)
+        isLevelUpgradedFrom(userKim, true, Level.BASIC)
+        isLevelUpgradedFrom(userLee, false, Level.SILVER)
+        isLevelUpgradedFrom(userGo, true, Level.SILVER)
+        isLevelUpgradedFrom(userKwon, false, Level.GOLD)
     }
 
 //    @Test
@@ -75,8 +75,9 @@ class UserServiceTest {
 //        checkLevel(userLee, existingLevel)
 //    }
 
-    fun checkLevel(user: User, expectedLevel: Level) {
+    fun isLevelUpgradedFrom(user: User, isUpgraded: Boolean, prevLevel: Level) {
         val updatedUser = dao.get(user.id)
+        val expectedLevel = if (isUpgraded) prevLevel.next else prevLevel
         assertEquals(expectedLevel, updatedUser.level)
     }
 }
