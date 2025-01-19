@@ -13,18 +13,25 @@ class UserService(private val userDao: UserDao) {
 
     fun upgradeLevels(users: List<User>) {
         users.forEach {
-            var isChanged = false
-            if (it.level == Level.BASIC && it.loginCnt >= MIN_LOGCOUNT_FOR_SILVER) {
-                it.level = Level.SILVER
-                isChanged = true
-            } else if (it.level == Level.SILVER && it.recommendCnt >= MIN_RECOMMEND_FOR_GOLD) {
-                it.level = Level.GOLD
-                isChanged = true
+            if(canUpgradeLevel(it)) {
+                upgradeLevel(it)
             }
+        }
+    }
 
-            if (isChanged) {
-                userDao.update(it)
-            }
+    private fun upgradeLevel(user: User) {
+        val newLevel = user.nextLevel()
+        user.level = newLevel
+        userDao.update(user)
+    }
+
+    private fun canUpgradeLevel(user: User): Boolean {
+
+        return when (user.level) {
+            Level.BASIC -> user.loginCnt >= MIN_LOGCOUNT_FOR_SILVER
+            Level.SILVER -> user.recommendCnt >= MIN_RECOMMEND_FOR_GOLD
+            Level.GOLD -> false
+            else -> throw IllegalArgumentException("Unknown Level: ${user.level}")
         }
     }
 
