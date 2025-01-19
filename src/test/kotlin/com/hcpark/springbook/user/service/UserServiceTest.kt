@@ -44,8 +44,6 @@ class UserServiceTest {
     @BeforeEach
     fun beforeEach() {
         dao.deleteAll()
-
-        users.forEach(dao::add)
     }
 
     @Test
@@ -55,6 +53,8 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevels() {
+        users.forEach(dao::add)
+
         userService.upgradeLevels(users)
 
         checkLevel(userPark, Level.BASIC)
@@ -63,6 +63,17 @@ class UserServiceTest {
         checkLevel(userGo, Level.GOLD)
         checkLevel(userKwon, Level.GOLD)
     }
+
+//    @Test
+//    fun add() {
+//        userPark.level = null
+//        userService.add(userPark)
+//        checkLevel(userPark, Level.BASIC)
+//
+//        val existingLevel = userLee.level!!
+//        userService.add(userLee)
+//        checkLevel(userLee, existingLevel)
+//    }
 
     fun checkLevel(user: User, expectedLevel: Level) {
         val updatedUser = dao.get(user.id)
