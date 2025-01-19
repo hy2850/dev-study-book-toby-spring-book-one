@@ -8,11 +8,8 @@ data class User(
     var loginCnt: Int = 0,
     var recommendCnt: Int = 0,
 ) {
-   fun nextLevel(): Level {
-        return when (level) {
-            Level.BASIC -> Level.SILVER
-            Level.SILVER -> Level.GOLD
-            Level.GOLD -> Level.GOLD
-        }
-   }
+    fun upgradeLevel() {
+        val nextLevel = level.next ?: throw IllegalStateException("${level}은 업그레이드가 불가능합니다.")
+        level = nextLevel
+    }
 }
