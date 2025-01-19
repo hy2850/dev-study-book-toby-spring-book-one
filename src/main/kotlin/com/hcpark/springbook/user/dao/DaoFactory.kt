@@ -1,5 +1,6 @@
 package com.hcpark.springbook.user.dao
 
+import com.hcpark.springbook.user.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import javax.sql.DataSource
@@ -12,6 +13,11 @@ class DaoFactory {
         return UserDao().apply {
             setDataSource(dataSource)
         }
+    }
+
+    @Bean
+    fun userService(userDao: UserDao): UserService {
+        return UserService(userDao)
     }
 
 //    @Bean
