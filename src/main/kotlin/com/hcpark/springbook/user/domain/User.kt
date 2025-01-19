@@ -7,4 +7,12 @@ data class User(
     var level: Level = Level.BASIC,
     var loginCnt: Int = 0,
     var recommendCnt: Int = 0,
-)
+) {
+   fun nextLevel(): Level {
+        return when (level) {
+            Level.BASIC -> Level.SILVER
+            Level.SILVER -> Level.GOLD
+            Level.GOLD -> Level.GOLD
+        }
+   }
+}
