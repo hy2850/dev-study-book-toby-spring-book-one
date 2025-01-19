@@ -103,6 +103,19 @@ class UserDao(
         }
     }
 
+    fun getAll(): List<User> {
+        return jdbcTemplate.query("select * from users") { rs, _ ->
+            User(
+                id = rs.getString("id"),
+                name = rs.getString("name"),
+                password = rs.getString("password"),
+                level = Level.valueOf(rs.getInt("level")),
+                loginCnt = rs.getInt("loginCnt"),
+                recommendCnt = rs.getInt("recommendCnt"),
+            )
+        }
+    }
+
     fun countAll(): Int {
 //        return jdbcContext.workWithStatementStrategyAndResultSet(
 //            { connection ->

@@ -11,8 +11,10 @@ class UserService(private val userDao: UserDao) {
         const val MIN_RECOMMEND_FOR_GOLD = 30
     }
 
-    fun upgradeLevels(users: List<User>) {
-        users.forEach {
+    fun upgradeLevels() {
+        val allUsers =  userDao.getAll()
+
+        allUsers.forEach {
             if(canUpgradeLevel(it)) {
                 upgradeLevel(it)
             }
