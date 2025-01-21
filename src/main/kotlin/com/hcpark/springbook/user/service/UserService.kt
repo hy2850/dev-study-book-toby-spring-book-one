@@ -1,36 +1,19 @@
 package com.hcpark.springbook.user.service
 
 import com.hcpark.springbook.user.dao.UserDao
-import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
 
-class UserService(private val userDao: UserDao) {
-
-    companion object {
-        const val MIN_LOGCOUNT_FOR_SILVER = 50
-        const val MIN_RECOMMEND_FOR_GOLD = 30
-    }
-
+class UserService(
+    private val userDao: UserDao,
+    private val userLevelUpgradePolicy: UserLevelUpgradePolicy
+) {
     fun upgradeLevels() {
         val allUsers =  userDao.getAll()
 
         allUsers.forEach {
-            if(canUpgradeLevel(it)) {
-                upgradeLevel(it)
+            if(userLevelUpgradePolicy.canUpgradeLevel(it)) {
+                userLevelUpgradePolicy.upgradeLevel(it)
             }
-        }
-    }
-
-    private fun upgradeLevel(user: User) {
-        user.upgradeLevel()
-        userDao.update(user)
-    }
-
-    private fun canUpgradeLevel(user: User): Boolean {
-        return when (user.level) {
-            Level.BASIC -> user.loginCnt >= MIN_LOGCOUNT_FOR_SILVER
-            Level.SILVER -> user.recommendCnt >= MIN_RECOMMEND_FOR_GOLD
-            Level.GOLD -> false
         }
     }
 

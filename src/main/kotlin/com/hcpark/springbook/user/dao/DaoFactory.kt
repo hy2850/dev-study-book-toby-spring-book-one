@@ -1,5 +1,6 @@
 package com.hcpark.springbook.user.dao
 
+import com.hcpark.springbook.user.service.UserLevelUpgradePolicyDefault
 import com.hcpark.springbook.user.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,7 +18,8 @@ class DaoFactory {
 
     @Bean
     fun userService(userDao: UserDao): UserService {
-        return UserService(userDao)
+        val userLevelUpgradePolicy = UserLevelUpgradePolicyDefault(userDao)
+        return UserService(userDao, userLevelUpgradePolicy)
     }
 
 //    @Bean
