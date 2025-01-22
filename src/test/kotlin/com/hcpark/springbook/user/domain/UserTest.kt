@@ -6,18 +6,16 @@ import kotlin.test.Test
 
 class UserTest {
 
-    private val user = User()
-
     @Test
     fun upgradeLevel() {
         Level.entries.forEach {
             val prevLevel = it
-            val nextLevel = it.next ?: return
+            val expectedNextLevel = it.next ?: return@forEach
 
-            user.level = prevLevel
-            user.upgradeLevel()
+            val user = User(prevLevel)
+            val updatedUser = user.upgradeLevel()
 
-            assertEquals(nextLevel, user.level)
+            assertEquals(expectedNextLevel, updatedUser.level)
         }
     }
 
@@ -25,13 +23,10 @@ class UserTest {
     fun cannotUpgradeLevel() {
         Level.entries.forEach {
             val prevLevel = it
-            val nextLevel = it.next
+            val nextLevel = it.next ?: return
 
-            if (nextLevel != null) {
-                return
-            }
+            val user = User(prevLevel)
 
-            user.level = prevLevel
             assertThrows(IllegalStateException::class.java) { user.upgradeLevel() }
         }
     }

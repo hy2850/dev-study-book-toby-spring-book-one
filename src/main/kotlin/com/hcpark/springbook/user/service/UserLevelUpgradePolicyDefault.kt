@@ -1,16 +1,14 @@
 package com.hcpark.springbook.user.service
 
-import com.hcpark.springbook.user.dao.UserDao
 import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
 import com.hcpark.springbook.user.service.UserLevelUpgradePolicy.Companion.MIN_LOGCOUNT_FOR_SILVER
 import com.hcpark.springbook.user.service.UserLevelUpgradePolicy.Companion.MIN_RECOMMEND_FOR_GOLD
 
-class UserLevelUpgradePolicyDefault(override val userDao: UserDao): UserLevelUpgradePolicy {
+class UserLevelUpgradePolicyDefault: UserLevelUpgradePolicy {
 
-    override fun upgradeLevel(user: User) {
-        user.upgradeLevel()
-        userDao.update(user)
+    override fun upgradeLevel(user: User): User {
+        return user.upgradeLevel()
     }
 
     override fun canUpgradeLevel(user: User): Boolean {

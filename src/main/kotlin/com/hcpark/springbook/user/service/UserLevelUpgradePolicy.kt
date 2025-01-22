@@ -8,8 +8,6 @@ interface UserLevelUpgradePolicy {
         const val MIN_RECOMMEND_FOR_GOLD = 30
     }
 
-    val userDao: Any
-
-    fun upgradeLevel(user: User)
+    fun upgradeLevel(user: User): User
     fun canUpgradeLevel(user: User): Boolean
 }
