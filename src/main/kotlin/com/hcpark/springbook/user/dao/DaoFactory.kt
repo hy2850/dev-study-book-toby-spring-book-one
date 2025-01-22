@@ -18,8 +18,7 @@ class DaoFactory {
 
     @Bean
     fun userService(userDao: UserDao): UserService {
-        val userLevelUpgradePolicy = UserLevelUpgradePolicyDefault(userDao)
-        return UserService(userDao, userLevelUpgradePolicy)
+        return UserService(userDao, UserLevelUpgradePolicyDefault())
     }
 
 //    @Bean
