@@ -26,12 +26,6 @@ class UserServiceTest {
         private val userGo = User("go", "고씨", "111213", Level.SILVER, 65, 30)
         private val userKwon = User("kwon", "권씨", "141516", Level.GOLD, 65, 30)
 
-//            User("park", "박씨", "123", Level.BASIC, 49, 0),
-//            User("kim", "김씨", "567", Level.BASIC, 50, 0),
-//            User("lee", "이씨", "8910", Level.SILVER, 65, 29),
-//            User("go", "고씨", "111213", Level.SILVER, 65, 30),
-//            User("kwon", "권씨", "141516", Level.GOLD, 65, 30),
-
         private val users: MutableList<User> = mutableListOf(
             userPark,
             userKim,
@@ -57,11 +51,11 @@ class UserServiceTest {
 
         userService.upgradeLevels()
 
-        isLevelUpgradedFrom(userPark, false, Level.BASIC)
-        isLevelUpgradedFrom(userKim, true, Level.BASIC)
-        isLevelUpgradedFrom(userLee, false, Level.SILVER)
-        isLevelUpgradedFrom(userGo, true, Level.SILVER)
-        isLevelUpgradedFrom(userKwon, false, Level.GOLD)
+        isLevelUpgradedFrom(userPark, false)
+        isLevelUpgradedFrom(userKim, true)
+        isLevelUpgradedFrom(userLee, false)
+        isLevelUpgradedFrom(userGo, true)
+        isLevelUpgradedFrom(userKwon, false)
     }
 
 //    @Test
@@ -75,8 +69,9 @@ class UserServiceTest {
 //        checkLevel(userLee, existingLevel)
 //    }
 
-    fun isLevelUpgradedFrom(user: User, isUpgraded: Boolean, prevLevel: Level) {
-        val updatedUser = dao.get(user.id)
+    fun isLevelUpgradedFrom(prevUser: User, isUpgraded: Boolean) {
+        val updatedUser = dao.get(prevUser.id)
+        val prevLevel = prevUser.level
         val expectedLevel = if (isUpgraded) prevLevel.next else prevLevel
         assertEquals(expectedLevel, updatedUser.level)
     }

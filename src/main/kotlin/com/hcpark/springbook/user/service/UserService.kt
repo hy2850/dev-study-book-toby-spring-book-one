@@ -8,11 +8,12 @@ class UserService(
     private val userLevelUpgradePolicy: UserLevelUpgradePolicy
 ) {
     fun upgradeLevels() {
-        val allUsers =  userDao.getAll()
+        val allUsers = userDao.getAll()
 
         allUsers.forEach {
             if(userLevelUpgradePolicy.canUpgradeLevel(it)) {
-                userLevelUpgradePolicy.upgradeLevel(it)
+                val newUser = userLevelUpgradePolicy.upgradeLevel(it)
+                userDao.update(newUser)
             }
         }
     }
