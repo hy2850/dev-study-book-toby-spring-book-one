@@ -46,6 +46,24 @@ class UserServiceTest {
     }
 
     @Test
+    fun upgradeLevel_noUpgrade() {
+        val noUpgradeUser = users.get(0)
+
+        userService.upgradeLevel(noUpgradeUser)
+
+        isLevelUpgradedFrom(noUpgradeUser, false)
+    }
+
+    @Test
+    fun upgradeLevel_doUpgrade() {
+        val upgradeUser = users.get(1)
+
+        userService.upgradeLevel(upgradeUser)
+
+        isLevelUpgradedFrom(upgradeUser, true)
+    }
+
+    @Test
     fun upgradeLevels() {
         users.forEach(dao::add)
 
