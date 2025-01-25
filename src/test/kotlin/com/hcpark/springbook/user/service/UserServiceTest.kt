@@ -3,8 +3,10 @@ package com.hcpark.springbook.user.service
 import com.hcpark.springbook.user.dao.UserDao
 import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -48,7 +50,7 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevel_noUpgrade() {
-        val noUpgradeUser = users.get(0)
+        val noUpgradeUser = users[0]
 
         userService.upgradeLevel(noUpgradeUser)
 
@@ -57,7 +59,7 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevel_doUpgrade() {
-        val upgradeUser = users.get(1)
+        val upgradeUser = users[1]
 
         userService.upgradeLevel(upgradeUser)
 
@@ -65,14 +67,29 @@ class UserServiceTest {
     }
 
     @Test
-    fun upgradeLevels() {
-        userService.upgradeLevels()
+    fun upgradeLevel_exception() {
+        val testUserService = TestUserService(users[1].id, dao, UserLevelUpgradePolicyDefault())
+
+        assertDoesNotThrow { testUserService.upgradeLevel(users[0]) }
+        assertThrows(TestUserService.TestUserServiceException::class.java) { testUserService.upgradeLevel(users[1]) }
+    }
+
+    @Test
+    fun upgradeAllLevels() {
+        userService.upgradeAllLevels()
 
         isLevelUpgradedFrom(userPark, false)
         isLevelUpgradedFrom(userKim, true)
         isLevelUpgradedFrom(userLee, false)
         isLevelUpgradedFrom(userGo, true)
         isLevelUpgradedFrom(userKwon, false)
+    }
+
+    @Test
+    fun upgradeAllLevels_exception() {
+        val testUserService = TestUserService(users[1].id, dao, UserLevelUpgradePolicyDefault())
+
+        assertThrows(TestUserService.TestUserServiceException::class.java) { testUserService.upgradeAllLevels() }
     }
 
 //    @Test
