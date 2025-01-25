@@ -38,6 +38,7 @@ class UserServiceTest {
     @BeforeEach
     fun beforeEach() {
         dao.deleteAll()
+        users.forEach(dao::add)
     }
 
     @Test
@@ -65,8 +66,6 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevels() {
-        users.forEach(dao::add)
-
         userService.upgradeLevels()
 
         isLevelUpgradedFrom(userPark, false)
