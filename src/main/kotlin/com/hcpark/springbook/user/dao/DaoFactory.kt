@@ -17,8 +17,8 @@ class DaoFactory {
     }
 
     @Bean
-    fun userService(userDao: UserDao): UserService {
-        return UserService(userDao, UserLevelUpgradePolicyDefault())
+    fun userService(dataSource: DataSource, userDao: UserDao): UserService {
+        return UserService(dataSource, userDao, UserLevelUpgradePolicyDefault())
     }
 
 //    @Bean
