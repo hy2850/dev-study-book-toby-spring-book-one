@@ -2,14 +2,28 @@ package com.hcpark.springbook.user.service
 
 import com.hcpark.springbook.user.dao.UserDao
 import com.hcpark.springbook.user.domain.User
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
+import org.springframework.transaction.support.DefaultTransactionDefinition
+import javax.sql.DataSource
 
 open class UserService(
+    private val dataSource: DataSource,
     private val userDao: UserDao,
     private val userLevelUpgradePolicy: UserLevelUpgradePolicy
 ) {
     fun upgradeAllLevels() {
-        val allUsers = userDao.getAll()
-        allUsers.forEach { upgradeLevel(it) }
+        val transactionManager = DataSourceTransactionManager(dataSource)
+        val status = transactionManager.getTransaction(DefaultTransactionDefinition())
+
+        try {
+            val allUsers = userDao.getAll()
+            allUsers.forEach { upgradeLevel(it) }
+
+            transactionManager.commit(status)
+        } catch (e: Exception) {
+            transactionManager.rollback(status)
+            throw e
+        }
     }
 
     internal open fun upgradeLevel(user: User) {
