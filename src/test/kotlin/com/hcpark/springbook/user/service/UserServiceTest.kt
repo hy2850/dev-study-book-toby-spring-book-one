@@ -50,7 +50,7 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevel_noUpgrade() {
-        val noUpgradeUser = users[0]
+        val noUpgradeUser = userPark
 
         userService.upgradeLevel(noUpgradeUser)
 
@@ -59,7 +59,7 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevel_doUpgrade() {
-        val upgradeUser = users[1]
+        val upgradeUser = userKim
 
         userService.upgradeLevel(upgradeUser)
 
@@ -68,7 +68,7 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevel_exception() {
-        val testUserService = TestUserService(users[1].id, dao, UserLevelUpgradePolicyDefault())
+        val testUserService = TestUserService(userKim.id, dao, UserLevelUpgradePolicyDefault())
 
         assertDoesNotThrow { testUserService.upgradeLevel(users[0]) }
         assertThrows(TestUserService.TestUserServiceException::class.java) { testUserService.upgradeLevel(users[1]) }
@@ -87,9 +87,12 @@ class UserServiceTest {
 
     @Test
     fun upgradeAllLevels_exception() {
-        val testUserService = TestUserService(users[1].id, dao, UserLevelUpgradePolicyDefault())
+        val testUserService = TestUserService(userGo.id, dao, UserLevelUpgradePolicyDefault())
 
         assertThrows(TestUserService.TestUserServiceException::class.java) { testUserService.upgradeAllLevels() }
+        isLevelUpgradedFrom(userPark, false)
+        isLevelUpgradedFrom(userKim, false) // transaction rollback
+        isLevelUpgradedFrom(userLee, false)
     }
 
 //    @Test
