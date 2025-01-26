@@ -4,6 +4,7 @@ import com.hcpark.springbook.user.dao.UserDao
 import com.hcpark.springbook.user.domain.User
 import org.springframework.transaction.PlatformTransactionManager
 
+// Better : can be replaced with Mockito 'when ... thenThrow'
 class TestExceptionUserServiceMock(
     transactionManager: PlatformTransactionManager,
     userDao: UserDao,
