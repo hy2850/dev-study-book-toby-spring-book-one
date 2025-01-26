@@ -31,8 +31,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web") // 브라우저로 h2 web console 접속하고 싶으면, Tomcat 내장서버 띄워야 접속 가능
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-    // Ch5 - JavaMail
+    // Ch5 - JavaMail and abstraction MailSender
     implementation("com.sun.mail:jakarta.mail:2.0.1")
+    implementation("org.springframework:spring-context-support")
 }
 
 kotlin {
