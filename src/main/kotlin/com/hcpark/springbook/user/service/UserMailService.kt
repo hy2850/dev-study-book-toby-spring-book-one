@@ -4,7 +4,7 @@ import com.hcpark.springbook.user.domain.User
 import org.springframework.mail.MailSender
 import org.springframework.mail.SimpleMailMessage
 
-class UserMailService(
+open class UserMailService(
     private val mailSender: MailSender
 ) {
 
@@ -12,7 +12,7 @@ class UserMailService(
         private const val FROM: String = "grade-upgrade-notifier@gmail.com"
     }
 
-    fun sendUpgradeEMail(user: User) {
+    open fun sendUpgradeEMail(user: User) {
         val mailMessage = SimpleMailMessage()
 
         mailMessage.setFrom(FROM)
