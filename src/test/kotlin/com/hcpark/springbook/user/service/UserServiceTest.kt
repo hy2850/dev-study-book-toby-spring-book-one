@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import javax.sql.DataSource
+import org.springframework.transaction.PlatformTransactionManager
 import kotlin.test.Test
 
 @SpringBootTest
 class UserServiceTest {
 
     @Autowired
-    private lateinit var dataSource: DataSource
+    private lateinit var transactionManager: PlatformTransactionManager
 
     @Autowired
     private lateinit var userService: UserService
@@ -72,7 +72,7 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevel_exception() {
-        val testUserService = TestUserService(userKim.id, dataSource, dao, UserLevelUpgradePolicyDefault())
+        val testUserService = TestUserService(userKim.id, transactionManager, dao, UserLevelUpgradePolicyDefault())
 
         assertDoesNotThrow { testUserService.upgradeLevel(users[0]) }
         assertThrows(TestUserService.TestUserServiceException::class.java) { testUserService.upgradeLevel(users[1]) }
@@ -91,7 +91,7 @@ class UserServiceTest {
 
     @Test
     fun upgradeAllLevels_exception() {
-        val testUserService = TestUserService(userGo.id, dataSource, dao, UserLevelUpgradePolicyDefault())
+        val testUserService = TestUserService(userGo.id, transactionManager, dao, UserLevelUpgradePolicyDefault())
 
         assertThrows(TestUserService.TestUserServiceException::class.java) { testUserService.upgradeAllLevels() }
         isLevelUpgradedFrom(userPark, false)
