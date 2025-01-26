@@ -67,7 +67,7 @@ class UserDao(
 
         // functional interface
         jdbcContext.workWithStatementStrategy { conn ->
-            conn.prepareStatement("insert into users(id, name, password, level, loginCnt, recommendCnt) values(?, ?, ?, ?, ?, ?)")
+            conn.prepareStatement("insert into users(id, name, password, level, loginCnt, recommendCnt, email) values(?, ?, ?, ?, ?, ?, ?)")
                 .apply {
                     setString(1, user.id)
                     setString(2, user.name)
@@ -75,6 +75,7 @@ class UserDao(
                     setInt(4, user.level.value)
                     setInt(5, user.loginCnt)
                     setInt(6, user.recommendCnt)
+                    setString(7, user.email)
                 }
         }
     }
@@ -96,6 +97,7 @@ class UserDao(
                     level = Level.valueOf(rs.getInt("level")),
                     loginCnt = rs.getInt("loginCnt"),
                     recommendCnt = rs.getInt("recommendCnt"),
+                    email = rs.getString("email"),
                 )
             } else {
                 throw EmptyResultDataAccessException(1)
@@ -112,6 +114,7 @@ class UserDao(
                 level = Level.valueOf(rs.getInt("level")),
                 loginCnt = rs.getInt("loginCnt"),
                 recommendCnt = rs.getInt("recommendCnt"),
+                email = rs.getString("email"),
             )
         }
     }
@@ -136,12 +139,13 @@ class UserDao(
 
     fun update(userToUpdate: User) {
         jdbcTemplate.update(
-            "update users set name = ?, password = ?, level = ?, loginCnt = ?, recommendCnt = ? where id = ?",
+            "update users set name = ?, password = ?, level = ?, loginCnt = ?, recommendCnt = ?, email = ? where id = ?",
             userToUpdate.name,
             userToUpdate.password,
             userToUpdate.level.value,
             userToUpdate.loginCnt,
             userToUpdate.recommendCnt,
+            userToUpdate.email,
             userToUpdate.id
         )
     }

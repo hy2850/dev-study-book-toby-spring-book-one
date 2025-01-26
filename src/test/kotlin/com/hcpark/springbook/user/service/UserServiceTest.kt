@@ -3,6 +3,7 @@ package com.hcpark.springbook.user.service
 import com.hcpark.springbook.user.dao.UserDao
 import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -26,11 +27,11 @@ class UserServiceTest {
     private lateinit var dao: UserDao
 
     companion object {
-        private val userPark = User("park", "박씨", "123", Level.BASIC, 49, 0)
-        private val userKim = User("kim", "김씨", "567", Level.BASIC, 50, 0)
-        private val userLee = User("lee", "이씨", "8910", Level.SILVER, 65, 29)
-        private val userGo = User("go", "고씨", "111213", Level.SILVER, 65, 30)
-        private val userKwon = User("kwon", "권씨", "141516", Level.GOLD, 65, 30)
+        private val userPark = User("park", "박씨", "123", Level.BASIC, 49, 0, "park@gmail.com")
+        private val userKim = User("kim", "김씨", "567", Level.BASIC, 50, 0, "kim@gmail.com")
+        private val userLee = User("lee", "이씨", "8910", Level.SILVER, 65, 29, "lee@gmail.com")
+        private val userGo = User("go", "고씨", "111213", Level.SILVER, 65, 30, "go@gmail.com")
+        private val userKwon = User("kwon", "권씨", "141516", Level.GOLD, 65, 30, "kwon@gmail.com")
 
         private val users: MutableList<User> = mutableListOf(
             userPark,
@@ -43,8 +44,12 @@ class UserServiceTest {
 
     @BeforeEach
     fun beforeEach() {
-        dao.deleteAll()
         users.forEach(dao::add)
+    }
+
+    @AfterEach
+    fun afterEach() {
+        dao.deleteAll()
     }
 
     @Test
