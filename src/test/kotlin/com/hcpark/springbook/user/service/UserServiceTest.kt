@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.mail.MailSender
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.transaction.PlatformTransactionManager
 import kotlin.test.Test
 
@@ -25,6 +27,9 @@ class UserServiceTest {
 
     @Autowired
     private lateinit var dao: UserDao
+
+    @MockitoBean
+    private val mailSender: MailSender = DummyMailSender()
 
     companion object {
         private val userPark = User("park", "박씨", "123", Level.BASIC, 49, 0, "park@gmail.com")
@@ -77,7 +82,13 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevel_exception() {
-        val testUserService = TestUserService(userKim.id, transactionManager, dao, UserLevelUpgradePolicyDefault())
+        val testUserService = TestUserService(
+            userKim.id,
+            transactionManager,
+            dao,
+            UserLevelUpgradePolicyDefault(),
+            UserMailService(DummyMailSender())
+        )
 
         assertDoesNotThrow { testUserService.upgradeLevel(users[0]) }
         assertThrows(TestUserService.TestUserServiceException::class.java) { testUserService.upgradeLevel(users[1]) }
@@ -96,7 +107,13 @@ class UserServiceTest {
 
     @Test
     fun upgradeAllLevels_exception() {
-        val testUserService = TestUserService(userGo.id, transactionManager, dao, UserLevelUpgradePolicyDefault())
+        val testUserService = TestUserService(
+            userGo.id,
+            transactionManager,
+            dao,
+            UserLevelUpgradePolicyDefault(),
+            UserMailService(DummyMailSender())
+        )
 
         assertThrows(TestUserService.TestUserServiceException::class.java) { testUserService.upgradeAllLevels() }
         isLevelUpgradedFrom(userPark, false)
