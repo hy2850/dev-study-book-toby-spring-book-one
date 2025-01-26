@@ -18,7 +18,7 @@ class JdbcTemplateTest {
     fun test() {
         // given
         val template = JdbcTemplate(dataSource)
-        template.update("insert into users values('1', '2', '3', ${Level.BASIC.value}, 0, 0)")
+        template.update("insert into users values('1', '2', '3', ${Level.BASIC.value}, 0, 0, 'abc@gmail.com')")
 
         // when
         val count = template.queryForObject("select count(*) from users") { rs, _ -> rs.getInt(1) }
