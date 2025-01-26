@@ -7,8 +7,9 @@ data class User(
     val level: Level = Level.BASIC,
     val loginCnt: Int = 0,
     val recommendCnt: Int = 0,
+    val email: String = ""
 ) {
-    constructor(level: Level) : this(id = "", name = "", password = "", level = level, loginCnt = 0, recommendCnt = 0)
+    constructor(level: Level) : this(id = "", name = "", password = "", level = level, loginCnt = 0, recommendCnt = 0, email = "")
 
     fun upgradeLevel(): User {
         val nextLevel = level.next ?: throw IllegalStateException("${level}은 업그레이드가 불가능합니다.")
