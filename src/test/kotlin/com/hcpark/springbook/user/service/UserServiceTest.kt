@@ -3,6 +3,7 @@ package com.hcpark.springbook.user.service
 import com.hcpark.springbook.user.dao.UserDao
 import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
+import com.hcpark.springbook.user.service.TestExceptionUserServiceMock.TestUserServiceException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mail.MailSender
@@ -83,16 +86,26 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevel_exception() {
-        val mock = TestExceptionUserServiceMock(
+//        val mock = TestExceptionUserServiceMock(
+//            transactionManager,
+//            dao,
+//            UserLevelUpgradePolicyDefault(),
+//            UserMailService(DummyMailSender())
+//        )
+//        mock.setExceptionUserId(userKim.id)
+
+        val userDaoMock = mock(UserDao::class.java)
+        `when`(userDaoMock.update(userKim.upgradeLevel())).thenThrow(TestUserServiceException::class.java)
+
+        val service = UserService(
             transactionManager,
-            dao,
+            userDaoMock,
             UserLevelUpgradePolicyDefault(),
             UserMailService(DummyMailSender())
         )
-        mock.setExceptionUserId(userKim.id)
 
-        assertDoesNotThrow { mock.upgradeLevel(users[0]) }
-        assertThrows(TestExceptionUserServiceMock.TestUserServiceException::class.java) { mock.upgradeLevel(users[1]) }
+        assertDoesNotThrow { service.upgradeLevel(users[0]) }
+        assertThrows(TestUserServiceException::class.java) { service.upgradeLevel(users[1]) }
     }
 
     @Test
@@ -116,7 +129,7 @@ class UserServiceTest {
         )
         mock.setExceptionUserId(userGo.id)
 
-        assertThrows(TestExceptionUserServiceMock.TestUserServiceException::class.java) { mock.upgradeAllLevels() }
+        assertThrows(TestUserServiceException::class.java) { mock.upgradeAllLevels() }
         isLevelUpgradedFrom(userPark, false)
         isLevelUpgradedFrom(userKim, false) // transaction rollback
         isLevelUpgradedFrom(userLee, false)
