@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -119,6 +120,23 @@ class UserServiceTest {
         isLevelUpgradedFrom(userPark, false)
         isLevelUpgradedFrom(userKim, false) // transaction rollback
         isLevelUpgradedFrom(userLee, false)
+    }
+
+    @Test
+    fun upgradeAllLevels_email_mock_test() {
+        val userMailServiceMock = UserMailServiceMock(DummyMailSender())
+        val mock = TestExceptionUserServiceMock(
+            transactionManager,
+            dao,
+            UserLevelUpgradePolicyDefault(),
+            userMailServiceMock
+        )
+
+        mock.upgradeAllLevels()
+
+        assertEquals(2, userMailServiceMock.userEmails.size)
+        assertTrue(userMailServiceMock.userEmails.contains(userKim.email))
+        assertTrue(userMailServiceMock.userEmails.contains(userGo.email))
     }
 
 //    @Test
