@@ -8,11 +8,9 @@ import org.springframework.transaction.support.DefaultTransactionDefinition
 open class UserService(
     private val transactionManager: PlatformTransactionManager,
     private val userDao: UserDao,
-    private val userLevelUpgradePolicy: UserLevelUpgradePolicy
+    private val userLevelUpgradePolicy: UserLevelUpgradePolicy,
+    private val userMailService: UserMailService
 ) {
-
-    private val userMailService = UserMailService()
-
     fun upgradeAllLevels() {
         val status = transactionManager.getTransaction(DefaultTransactionDefinition())
 

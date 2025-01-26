@@ -8,8 +8,9 @@ class TestUserService(
     private val exceptionUserId: String,
     transactionManager: PlatformTransactionManager,
     userDao: UserDao,
-    userLevelUpgradePolicy: UserLevelUpgradePolicy
-) : UserService(transactionManager, userDao, userLevelUpgradePolicy) {
+    userLevelUpgradePolicy: UserLevelUpgradePolicy,
+    userMailService: UserMailService
+) : UserService(transactionManager, userDao, userLevelUpgradePolicy, userMailService) {
 
     override fun upgradeLevel(user: User) {
         if (user.id == exceptionUserId) {

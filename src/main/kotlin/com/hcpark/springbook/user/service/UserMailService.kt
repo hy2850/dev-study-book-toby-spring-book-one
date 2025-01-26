@@ -1,20 +1,18 @@
 package com.hcpark.springbook.user.service
 
 import com.hcpark.springbook.user.domain.User
+import org.springframework.mail.MailSender
 import org.springframework.mail.SimpleMailMessage
-import org.springframework.mail.javamail.JavaMailSenderImpl
 
-class UserMailService {
+class UserMailService(
+    private val mailSender: MailSender
+) {
 
     companion object {
-        private const val SMTPHOST = "smtp.gmail.com"
         private const val FROM: String = "grade-upgrade-notifier@gmail.com"
     }
 
     fun sendUpgradeEMail(user: User) {
-        val mailSender = JavaMailSenderImpl()
-        mailSender.setHost(SMTPHOST)
-
         val mailMessage = SimpleMailMessage()
 
         mailMessage.setFrom(FROM)
