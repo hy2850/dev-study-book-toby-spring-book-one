@@ -4,6 +4,8 @@ import com.hcpark.springbook.user.service.UserLevelUpgradePolicyDefault
 import com.hcpark.springbook.user.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
+import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
 @Configuration
@@ -17,8 +19,13 @@ class DaoFactory {
     }
 
     @Bean
-    fun userService(dataSource: DataSource, userDao: UserDao): UserService {
-        return UserService(dataSource, userDao, UserLevelUpgradePolicyDefault())
+    fun userService(dataSource: DataSource): UserService {
+        return UserService(platformTransactionManager(dataSource), userDao(dataSource), UserLevelUpgradePolicyDefault())
+    }
+
+    @Bean
+    fun platformTransactionManager(dataSource: DataSource): PlatformTransactionManager {
+        return DataSourceTransactionManager(dataSource)
     }
 
 //    @Bean
