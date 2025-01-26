@@ -2,14 +2,14 @@ package com.hcpark.springbook.user.service
 
 import com.hcpark.springbook.user.dao.UserDao
 import com.hcpark.springbook.user.domain.User
-import javax.sql.DataSource
+import org.springframework.transaction.PlatformTransactionManager
 
 class TestUserService(
     private val exceptionUserId: String,
-    dataSource: DataSource,
+    transactionManager: PlatformTransactionManager,
     userDao: UserDao,
     userLevelUpgradePolicy: UserLevelUpgradePolicy
-): UserService(dataSource, userDao, userLevelUpgradePolicy) {
+) : UserService(transactionManager, userDao, userLevelUpgradePolicy) {
 
     override fun upgradeLevel(user: User) {
         if (user.id == exceptionUserId) {
