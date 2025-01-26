@@ -1,10 +1,13 @@
 package com.hcpark.springbook.user.dao
 
 import com.hcpark.springbook.user.service.UserLevelUpgradePolicyDefault
+import com.hcpark.springbook.user.service.UserMailService
 import com.hcpark.springbook.user.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
+import org.springframework.mail.MailSender
+import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
@@ -19,13 +22,28 @@ class DaoFactory {
     }
 
     @Bean
-    fun userService(dataSource: DataSource): UserService {
-        return UserService(platformTransactionManager(dataSource), userDao(dataSource), UserLevelUpgradePolicyDefault())
+    fun userService(dataSource: DataSource, mailSender: MailSender): UserService {
+        return UserService(
+            platformTransactionManager(dataSource),
+            userDao(dataSource),
+            UserLevelUpgradePolicyDefault(),
+            userMailService(mailSender)
+        )
     }
 
     @Bean
     fun platformTransactionManager(dataSource: DataSource): PlatformTransactionManager {
         return DataSourceTransactionManager(dataSource)
+    }
+
+    @Bean
+    fun userMailService(mailSender: MailSender): UserMailService {
+        return UserMailService(mailSender)
+    }
+
+    @Bean
+    fun mailSender(): MailSender {
+        return JavaMailSenderImpl()
     }
 
 //    @Bean
