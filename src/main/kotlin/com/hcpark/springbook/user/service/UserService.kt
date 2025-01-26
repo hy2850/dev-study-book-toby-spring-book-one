@@ -10,6 +10,9 @@ open class UserService(
     private val userDao: UserDao,
     private val userLevelUpgradePolicy: UserLevelUpgradePolicy
 ) {
+
+    private val userMailService = UserMailService()
+
     fun upgradeAllLevels() {
         val status = transactionManager.getTransaction(DefaultTransactionDefinition())
 
@@ -28,6 +31,7 @@ open class UserService(
         if(userLevelUpgradePolicy.canUpgradeLevel(user)) {
             val newUser = userLevelUpgradePolicy.upgradeLevel(user)
             userDao.update(newUser)
+            userMailService.sendUpgradeEMail(newUser)
         }
     }
 
