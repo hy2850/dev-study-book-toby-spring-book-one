@@ -82,16 +82,16 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevel_exception() {
-        val testUserService = TestUserService(
-            userKim.id,
+        val mock = TestExceptionUserServiceMock(
             transactionManager,
             dao,
             UserLevelUpgradePolicyDefault(),
             UserMailService(DummyMailSender())
         )
+        mock.setExceptionUserId(userKim.id)
 
-        assertDoesNotThrow { testUserService.upgradeLevel(users[0]) }
-        assertThrows(TestUserService.TestUserServiceException::class.java) { testUserService.upgradeLevel(users[1]) }
+        assertDoesNotThrow { mock.upgradeLevel(users[0]) }
+        assertThrows(TestExceptionUserServiceMock.TestUserServiceException::class.java) { mock.upgradeLevel(users[1]) }
     }
 
     @Test
@@ -107,15 +107,15 @@ class UserServiceTest {
 
     @Test
     fun upgradeAllLevels_exception() {
-        val testUserService = TestUserService(
-            userGo.id,
+        val mock = TestExceptionUserServiceMock(
             transactionManager,
             dao,
             UserLevelUpgradePolicyDefault(),
             UserMailService(DummyMailSender())
         )
+        mock.setExceptionUserId(userGo.id)
 
-        assertThrows(TestUserService.TestUserServiceException::class.java) { testUserService.upgradeAllLevels() }
+        assertThrows(TestExceptionUserServiceMock.TestUserServiceException::class.java) { mock.upgradeAllLevels() }
         isLevelUpgradedFrom(userPark, false)
         isLevelUpgradedFrom(userKim, false) // transaction rollback
         isLevelUpgradedFrom(userLee, false)
