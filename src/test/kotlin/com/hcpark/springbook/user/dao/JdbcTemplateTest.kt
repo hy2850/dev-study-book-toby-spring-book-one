@@ -1,5 +1,6 @@
 package com.hcpark.springbook.user.dao
 
+import com.hcpark.springbook.user.domain.Level
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +18,7 @@ class JdbcTemplateTest {
     fun test() {
         // given
         val template = JdbcTemplate(dataSource)
-        template.update("insert into users values('1', '2', '3')")
+        template.update("insert into users values('1', '2', '3', ${Level.BASIC.value}, 0, 0)")
 
         // when
         val count = template.queryForObject("select count(*) from users") { rs, _ -> rs.getInt(1) }
