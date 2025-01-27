@@ -97,8 +97,7 @@ class UserServiceTest {
         val userDaoMock = mock(UserDao::class.java)
         `when`(userDaoMock.update(userKim.upgradeLevel())).thenThrow(TestUserServiceException::class.java)
 
-        val service = UserService(
-            transactionManager,
+        val service = UserServiceImpl(
             userDaoMock,
             UserLevelUpgradePolicyDefault(),
             UserMailService(DummyMailSender())
@@ -122,14 +121,15 @@ class UserServiceTest {
     @Test
     fun upgradeAllLevels_exception() {
         val mock = TestExceptionUserServiceMock(
-            transactionManager,
             dao,
             UserLevelUpgradePolicyDefault(),
             UserMailService(DummyMailSender())
         )
+        val userService = UserServiceTx(transactionManager, mock)
+
         mock.setExceptionUserId(userGo.id)
 
-        assertThrows(TestUserServiceException::class.java) { mock.upgradeAllLevels() }
+        assertThrows(TestUserServiceException::class.java) { userService.upgradeAllLevels() }
         isLevelUpgradedFrom(userPark, false)
         isLevelUpgradedFrom(userKim, false) // transaction rollback
         isLevelUpgradedFrom(userLee, false)
@@ -139,13 +139,13 @@ class UserServiceTest {
     fun upgradeAllLevels_email_mock_test() {
         val userMailServiceMock = UserMailServiceMock(DummyMailSender())
         val mock = TestExceptionUserServiceMock(
-            transactionManager,
             dao,
             UserLevelUpgradePolicyDefault(),
             userMailServiceMock
         )
 
-        mock.upgradeAllLevels()
+        val userService = UserServiceTx(transactionManager, mock)
+        userService.upgradeAllLevels()
 
         assertEquals(2, userMailServiceMock.userEmails.size)
         assertTrue(userMailServiceMock.userEmails.contains(userKim.email))
