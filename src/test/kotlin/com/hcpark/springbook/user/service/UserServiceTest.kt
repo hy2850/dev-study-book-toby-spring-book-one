@@ -187,7 +187,7 @@ class UserServiceTest {
         val txUserService = Proxy.newProxyInstance(
             javaClass.classLoader,
             arrayOf(UserService::class.java),
-            TransactionHandler(transactionManager, mock)
+            TransactionHandler(mock, transactionManager, "upgradeAllLevels")
         ) as UserService
 
         mock.setExceptionUserId(userGo.id)
