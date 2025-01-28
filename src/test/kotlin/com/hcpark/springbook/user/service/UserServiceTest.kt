@@ -1,6 +1,7 @@
 package com.hcpark.springbook.user.service
 
 import com.hcpark.springbook.user.dao.UserDao
+import com.hcpark.springbook.user.dao.UserDaoMock
 import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
 import com.hcpark.springbook.user.service.TestExceptionUserServiceMock.TestUserServiceException
@@ -130,6 +131,7 @@ class UserServiceTest {
         mock.setExceptionUserId(userGo.id)
 
         assertThrows(TestUserServiceException::class.java) { userService.upgradeAllLevels() }
+
         isLevelUpgradedFrom(userPark, false)
         isLevelUpgradedFrom(userKim, false) // transaction rollback
         isLevelUpgradedFrom(userLee, false)
@@ -137,15 +139,21 @@ class UserServiceTest {
 
     @Test
     fun upgradeAllLevels_email_mock_test() {
+        val userDaoMock = UserDaoMock()
+        userDaoMock.setUsers(userPark, userKim, userLee, userGo, userKwon)
+
         val userMailServiceMock = UserMailServiceMock(DummyMailSender())
+
         val mock = TestExceptionUserServiceMock(
-            dao,
+            userDaoMock,
             UserLevelUpgradePolicyDefault(),
             userMailServiceMock
         )
 
         val userService = UserServiceTx(transactionManager, mock)
         userService.upgradeAllLevels()
+
+        assertEquals(userDaoMock.users.size, userDaoMock.updatedUsers.size)
 
         assertEquals(2, userMailServiceMock.userEmails.size)
         assertTrue(userMailServiceMock.userEmails.contains(userKim.email))
