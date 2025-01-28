@@ -5,6 +5,7 @@ import com.hcpark.springbook.user.dao.UserDaoMock
 import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
 import com.hcpark.springbook.user.service.TestExceptionUserServiceMock.TestUserServiceException
+import com.hcpark.springbook.user.transaction.TransactionHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
@@ -22,6 +23,8 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.cglib.proxy.Proxy
+import org.springframework.cglib.proxy.UndeclaredThrowableException
 import org.springframework.mail.MailSender
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.test.context.bean.override.mockito.MockitoBean
@@ -155,7 +158,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Test transaction rollback - need real dao instance")
-    fun upgradeAllLevels_exception() {
+    fun upgradeAllLevels_exception_transaction_rollback() {
         val mock = TestExceptionUserServiceMock(
             dao,
             UserLevelUpgradePolicyDefault(),
@@ -166,6 +169,30 @@ class UserServiceTest {
         mock.setExceptionUserId(userGo.id)
 
         assertThrows(TestUserServiceException::class.java) { userService.upgradeAllLevels() }
+
+        isLevelUpgradedFrom(userPark, false)
+        isLevelUpgradedFrom(userKim, false) // transaction rollback
+        isLevelUpgradedFrom(userLee, false)
+    }
+
+    @Test
+    @DisplayName("txUserService Dynamic proxy rollback test")
+    fun upgradeAllLevels_exception_transaction_rollback_dynamic_proxy() {
+        val mock = TestExceptionUserServiceMock(
+            dao,
+            UserLevelUpgradePolicyDefault(),
+            UserMailService(DummyMailSender())
+        )
+
+        val txUserService = Proxy.newProxyInstance(
+            javaClass.classLoader,
+            arrayOf(UserService::class.java),
+            TransactionHandler(transactionManager, mock)
+        ) as UserService
+
+        mock.setExceptionUserId(userGo.id)
+
+        assertThrows(UndeclaredThrowableException::class.java) { txUserService.upgradeAllLevels() }
 
         isLevelUpgradedFrom(userPark, false)
         isLevelUpgradedFrom(userKim, false) // transaction rollback
