@@ -28,7 +28,7 @@ class TransactionHandler(
             return res
         } catch (e: InvocationTargetException) {
             transactionManager.rollback(status)
-            throw e
+            throw e.targetException
         }
     }
 }

@@ -24,7 +24,6 @@ import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cglib.proxy.Proxy
-import org.springframework.cglib.proxy.UndeclaredThrowableException
 import org.springframework.mail.MailSender
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.test.context.bean.override.mockito.MockitoBean
@@ -192,7 +191,7 @@ class UserServiceTest {
 
         mock.setExceptionUserId(userGo.id)
 
-        assertThrows(UndeclaredThrowableException::class.java) { txUserService.upgradeAllLevels() }
+        assertThrows(TestUserServiceException::class.java) { txUserService.upgradeAllLevels() }
 
         isLevelUpgradedFrom(userPark, false)
         isLevelUpgradedFrom(userKim, false) // transaction rollback
