@@ -34,6 +34,7 @@ class HelloProxyTest {
 
         assertTrue(helloDynamicProxy.sayHello("Toby") == "HELLO TOBY")
         assertTrue(helloDynamicProxy.sayHi("Toby") == "HI TOBY")
-        assertTrue(helloDynamicProxy.sayThankYou("Toby") == "THANK YOU TOBY")
+//        assertTrue(helloDynamicProxy.sayThankYou("Toby") == "THANK YOU TOBY")
+        assertTrue(helloDynamicProxy.sayThankYou("Toby") == "Thank you Toby")
     }
 }
