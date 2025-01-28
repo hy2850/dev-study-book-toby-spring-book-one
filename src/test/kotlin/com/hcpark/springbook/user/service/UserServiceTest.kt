@@ -6,6 +6,7 @@ import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
 import com.hcpark.springbook.user.service.TestExceptionUserServiceMock.TestUserServiceException
 import com.hcpark.springbook.user.transaction.TransactionHandler
+import com.hcpark.springbook.user.transaction.TxProxyFactoryBean
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
@@ -24,14 +25,19 @@ import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cglib.proxy.Proxy
+import org.springframework.context.ApplicationContext
 import org.springframework.mail.MailSender
 import org.springframework.mail.SimpleMailMessage
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.transaction.PlatformTransactionManager
 import kotlin.test.Test
 
 @SpringBootTest
 class UserServiceTest {
+
+    @Autowired
+    private lateinit var applicationContext: ApplicationContext
 
     @Autowired
     private lateinit var transactionManager: PlatformTransactionManager
@@ -190,6 +196,29 @@ class UserServiceTest {
         ) as UserService
 
         mock.setExceptionUserId(userGo.id)
+
+        assertThrows(TestUserServiceException::class.java) { txUserService.upgradeAllLevels() }
+
+        isLevelUpgradedFrom(userPark, false)
+        isLevelUpgradedFrom(userKim, false) // transaction rollback
+        isLevelUpgradedFrom(userLee, false)
+    }
+
+    @Test
+    @DirtiesContext
+    @DisplayName("txUserService Dynamic proxy factory bean rollback test")
+    fun upgradeAllLevels_exception_transaction_rollback_dynamic_proxy_factory_bean() {
+        val mock = TestExceptionUserServiceMock(
+            dao,
+            UserLevelUpgradePolicyDefault(),
+            UserMailService(DummyMailSender())
+        )
+        mock.setExceptionUserId(userGo.id)
+
+        val txFactoryBean = applicationContext.getBean("&txProxyFactoryBean", TxProxyFactoryBean::class.java)
+        txFactoryBean.setTarget(mock)
+
+        val txUserService = txFactoryBean.`object` as UserService
 
         assertThrows(TestUserServiceException::class.java) { txUserService.upgradeAllLevels() }
 
