@@ -5,6 +5,7 @@ import com.hcpark.springbook.user.service.UserMailService
 import com.hcpark.springbook.user.service.UserService
 import com.hcpark.springbook.user.service.UserServiceImpl
 import com.hcpark.springbook.user.service.UserServiceTx
+import com.hcpark.springbook.user.transaction.TxProxyFactoryBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
@@ -50,6 +51,16 @@ class DaoFactory {
     @Bean
     fun mailSender(): MailSender {
         return JavaMailSenderImpl()
+    }
+
+    @Bean
+    fun txProxyFactoryBean(dataSource: DataSource): TxProxyFactoryBean {
+        return TxProxyFactoryBean(
+            userService(dataSource, mailSender()),
+            platformTransactionManager(dataSource),
+            "upgradeAllLevels",
+            UserService::class.java
+        )
     }
 
 //    @Bean
