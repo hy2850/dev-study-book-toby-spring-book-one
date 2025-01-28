@@ -214,7 +214,7 @@ class UserServiceTest {
         val userService = UserServiceTx(transactionManager, mock)
         userService.upgradeAllLevels()
 
-        assertEquals(userDaoMock.users.size, userDaoMock.updatedUsers.size)
+        assertEquals(2, userDaoMock.updatedUsers.size)
 
         assertEquals(2, userMailServiceMock.userEmails.size)
         assertTrue(userMailServiceMock.userEmails.contains(userKim.email))
