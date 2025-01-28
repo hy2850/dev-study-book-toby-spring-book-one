@@ -34,6 +34,9 @@ dependencies {
     // Ch5 - JavaMail and abstraction MailSender
     implementation("com.sun.mail:jakarta.mail:2.0.1")
     implementation("org.springframework:spring-context-support")
+
+    // Kotlin에서 Mockito any() 사용시 any() can be null error - https://stackoverflow.com/questions/59230041/argumentmatchers-any-must-not-be-null
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }
 
 kotlin {

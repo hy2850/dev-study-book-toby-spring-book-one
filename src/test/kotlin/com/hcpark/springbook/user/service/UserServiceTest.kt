@@ -5,6 +5,7 @@ import com.hcpark.springbook.user.dao.UserDaoMock
 import com.hcpark.springbook.user.domain.Level
 import com.hcpark.springbook.user.domain.User
 import com.hcpark.springbook.user.service.TestExceptionUserServiceMock.TestUserServiceException
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -12,11 +13,17 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mail.MailSender
+import org.springframework.mail.SimpleMailMessage
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.transaction.PlatformTransactionManager
 import kotlin.test.Test
@@ -110,16 +117,44 @@ class UserServiceTest {
 
     @Test
     fun upgradeAllLevels() {
-        userService.upgradeAllLevels()
+        val userDaoMock = mock(UserDao::class.java)
+        `when`(userDaoMock.getAll()).thenReturn(users)
 
-        isLevelUpgradedFrom(userPark, false)
-        isLevelUpgradedFrom(userKim, true)
-        isLevelUpgradedFrom(userLee, false)
-        isLevelUpgradedFrom(userGo, true)
-        isLevelUpgradedFrom(userKwon, false)
+        val mailSenderMock = mock(MailSender::class.java)
+
+        val service = UserServiceImpl(
+            userDaoMock,
+            UserLevelUpgradePolicyDefault(),
+            UserMailService(mailSenderMock)
+        )
+
+        service.upgradeAllLevels()
+
+        verify(userDaoMock, times(2)).update(any())
+        verify(userDaoMock).update(userKim.upgradeLevel())
+        verify(userDaoMock).update(userGo.upgradeLevel())
+
+//        isLevelUpgradedFrom(userPark, false)
+//        isLevelUpgradedFrom(userKim, true)
+//        isLevelUpgradedFrom(userLee, false)
+//        isLevelUpgradedFrom(userGo, true)
+//        isLevelUpgradedFrom(userKwon, false)
+
+        val mailMessageArg = ArgumentCaptor.forClass(SimpleMailMessage::class.java)
+        verify(mailSenderMock, times(2)).send(mailMessageArg.capture())
+
+        val mailMessages = mailMessageArg.allValues
+            .map { it.to?.get(0) }
+            .filterNotNull()
+            .toCollection(mutableSetOf())
+
+        assertThat(mailMessages.size).isEqualTo(2)
+        assertTrue(mailMessages.contains(userKim.email))
+        assertTrue(mailMessages.contains(userKim.email))
     }
 
     @Test
+    @DisplayName("Test transaction rollback - need real dao instance")
     fun upgradeAllLevels_exception() {
         val mock = TestExceptionUserServiceMock(
             dao,
