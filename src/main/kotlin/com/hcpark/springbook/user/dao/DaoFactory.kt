@@ -18,7 +18,7 @@ class DaoFactory {
 
     @Bean
     fun userDao(dataSource: DataSource): UserDao {
-        return UserDao().apply {
+        return UserDaoImpl().apply {
             setDataSource(dataSource)
         }
     }
