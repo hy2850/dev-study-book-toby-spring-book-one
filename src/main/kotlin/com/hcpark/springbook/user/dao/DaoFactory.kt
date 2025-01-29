@@ -24,7 +24,7 @@ class DaoFactory {
         }
     }
 
-    @Bean
+    //    @Bean
     fun userService(dataSource: DataSource, mailSender: MailSender): UserService {
         val userService = UserServiceImpl(
             userDao(dataSource),
@@ -55,8 +55,14 @@ class DaoFactory {
 
     @Bean
     fun txProxyFactoryBean(dataSource: DataSource): TxProxyFactoryBean {
+        val userService = UserServiceImpl(
+            userDao(dataSource),
+            UserLevelUpgradePolicyDefault(),
+            userMailService(mailSender())
+        )
+
         return TxProxyFactoryBean(
-            userService(dataSource, mailSender()),
+            userService,
             platformTransactionManager(dataSource),
             "upgradeAllLevels",
             UserService::class.java
