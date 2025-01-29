@@ -5,7 +5,8 @@ import com.hcpark.springbook.user.service.UserMailService
 import com.hcpark.springbook.user.service.UserService
 import com.hcpark.springbook.user.service.UserServiceImpl
 import com.hcpark.springbook.user.service.UserServiceTx
-import com.hcpark.springbook.user.transaction.TxProxyFactoryBean
+import com.hcpark.springbook.user.transaction.TransactionAdvice
+import org.springframework.aop.framework.ProxyFactoryBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
@@ -54,19 +55,28 @@ class DaoFactory {
     }
 
     @Bean
-    fun txProxyFactoryBean(dataSource: DataSource): TxProxyFactoryBean {
+    fun txProxyFactoryBean(dataSource: DataSource): ProxyFactoryBean {
         val userService = UserServiceImpl(
             userDao(dataSource),
             UserLevelUpgradePolicyDefault(),
             userMailService(mailSender())
         )
 
-        return TxProxyFactoryBean(
-            userService,
+//        return TxProxyFactoryBean(
+//            userService,
+//            platformTransactionManager(dataSource),
+//            "upgradeAllLevels",
+//            UserService::class.java
+//        )
+
+        val pfBean = ProxyFactoryBean()
+        val transactionAdvice = TransactionAdvice(
             platformTransactionManager(dataSource),
-            "upgradeAllLevels",
-            UserService::class.java
+            "upgradeAllLevels"
         )
+        pfBean.setTarget(userService)
+        pfBean.addAdvice(transactionAdvice)
+        return pfBean
     }
 
 //    @Bean
