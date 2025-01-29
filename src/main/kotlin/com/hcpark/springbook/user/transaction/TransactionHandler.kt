@@ -12,14 +12,14 @@ class TransactionHandler(
     private val pattern: String
 ) : InvocationHandler {
 
-    override fun invoke(proxy: Any, method: Method, args: Array<out Any>): Any {
+    override fun invoke(proxy: Any, method: Method, args: Array<out Any>): Any? {
         if (method.name.startsWith(pattern)) {
             return invokeWithTransaction(method, args)
         }
         return method.invoke(target, *args)
     }
 
-    private fun invokeWithTransaction(method: Method, args: Array<out Any>): Any {
+    private fun invokeWithTransaction(method: Method, args: Array<out Any>): Any? {
         val status = transactionManager.getTransaction(DefaultTransactionDefinition())
 
         try {
