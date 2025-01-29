@@ -7,6 +7,8 @@ import com.hcpark.springbook.user.service.UserServiceImpl
 import com.hcpark.springbook.user.service.UserServiceTx
 import com.hcpark.springbook.user.transaction.TransactionAdvice
 import org.springframework.aop.framework.ProxyFactoryBean
+import org.springframework.aop.support.DefaultPointcutAdvisor
+import org.springframework.aop.support.NameMatchMethodPointcut
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
@@ -70,12 +72,16 @@ class DaoFactory {
 //        )
 
         val pfBean = ProxyFactoryBean()
+
+        val transactionPointcut = NameMatchMethodPointcut()
+        transactionPointcut.setMappedName("upgrade*")
+
         val transactionAdvice = TransactionAdvice(
-            platformTransactionManager(dataSource),
-            "upgradeAllLevels"
+            platformTransactionManager(dataSource)
         )
+
         pfBean.setTarget(userService)
-        pfBean.addAdvice(transactionAdvice)
+        pfBean.addAdvisor(DefaultPointcutAdvisor(transactionPointcut, transactionAdvice))
         return pfBean
     }
 
