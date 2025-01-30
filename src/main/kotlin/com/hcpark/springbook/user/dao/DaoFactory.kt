@@ -6,6 +6,8 @@ import com.hcpark.springbook.user.service.UserService
 import com.hcpark.springbook.user.service.UserServiceImpl
 import com.hcpark.springbook.user.service.UserServiceTx
 import com.hcpark.springbook.user.transaction.TransactionAdvice
+import org.aopalliance.aop.Advice
+import org.springframework.aop.Pointcut
 import org.springframework.aop.framework.ProxyFactoryBean
 import org.springframework.aop.support.DefaultPointcutAdvisor
 import org.springframework.aop.support.NameMatchMethodPointcut
@@ -28,7 +30,7 @@ class DaoFactory {
     }
 
     //    @Bean
-    fun userService(dataSource: DataSource, mailSender: MailSender): UserService {
+    fun userServiceImpl(dataSource: DataSource, mailSender: MailSender): UserService {
         val userService = UserServiceImpl(
             userDao(dataSource),
             UserLevelUpgradePolicyDefault(),
@@ -55,6 +57,26 @@ class DaoFactory {
     fun mailSender(): MailSender {
         return JavaMailSenderImpl()
     }
+
+    @Bean
+    fun transactionPointcut(): Pointcut {
+        val transactionPointcut = NameMatchMethodPointcut()
+        transactionPointcut.setMappedName("upgrade*")
+        return transactionPointcut
+    }
+
+    @Bean
+    fun transactionAdvice(platformTransactionManager: PlatformTransactionManager): Advice {
+        return TransactionAdvice(platformTransactionManager)
+    }
+
+//    @Bean
+//    fun transactionAdvisor(
+//        transactionPointcut: Pointcut,
+//        transactionAdvice: Advice
+//    ): Advisor {
+//        return DefaultPointcutAdvisor(transactionPointcut, transactionAdvice)
+//    }
 
     @Bean
     fun txProxyFactoryBean(dataSource: DataSource): ProxyFactoryBean {
