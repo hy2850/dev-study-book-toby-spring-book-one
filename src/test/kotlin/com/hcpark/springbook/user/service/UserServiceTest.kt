@@ -21,12 +21,14 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
+import org.springframework.aop.framework.ProxyFactoryBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cglib.proxy.Proxy
 import org.springframework.context.ApplicationContext
 import org.springframework.mail.MailSender
 import org.springframework.mail.SimpleMailMessage
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.transaction.PlatformTransactionManager
 import kotlin.test.Test
@@ -202,28 +204,28 @@ class UserServiceTest {
         isLevelUpgradedFrom(userLee, false)
     }
 
-//    @Test
-//    @DirtiesContext
-//    @DisplayName("txUserService Dynamic proxy factory bean rollback test")
-//    fun upgradeAllLevels_exception_transaction_rollback_dynamic_proxy_factory_bean() {
-//        val mock = TestExceptionUserServiceMock(
-//            dao,
-//            UserLevelUpgradePolicyDefault(),
-//            UserMailService(DummyMailSender())
-//        )
-//        mock.setExceptionUserId(userGo.id)
-//
-//        val txFactoryBean = applicationContext.getBean("&txProxyFactoryBean", TxProxyFactoryBean::class.java)
-//        txFactoryBean.setTarget(mock)
-//
-//        val txUserService = txFactoryBean.`object` as UserService
-//
-//        assertThrows(TestUserServiceException::class.java) { txUserService.upgradeAllLevels() }
-//
-//        isLevelUpgradedFrom(userPark, false)
-//        isLevelUpgradedFrom(userKim, false) // transaction rollback
-//        isLevelUpgradedFrom(userLee, false)
-//    }
+    @Test
+    @DirtiesContext
+    @DisplayName("txUserService Dynamic proxy factory bean rollback test")
+    fun upgradeAllLevels_exception_transaction_rollback_dynamic_proxy_factory_bean() {
+        val mock = TestExceptionUserServiceMock(
+            dao,
+            UserLevelUpgradePolicyDefault(),
+            UserMailService(DummyMailSender())
+        )
+        mock.setExceptionUserId(userGo.id)
+
+        val txFactoryBean = applicationContext.getBean("&userService", ProxyFactoryBean::class.java)
+        txFactoryBean.setTarget(mock)
+
+        val txUserService = txFactoryBean.`object` as UserService
+
+        assertThrows(TestUserServiceException::class.java) { txUserService.upgradeAllLevels() }
+
+        isLevelUpgradedFrom(userPark, false)
+        isLevelUpgradedFrom(userKim, false) // transaction rollback
+        isLevelUpgradedFrom(userLee, false)
+    }
 
     @Test
     fun upgradeAllLevels_email_mock_test() {

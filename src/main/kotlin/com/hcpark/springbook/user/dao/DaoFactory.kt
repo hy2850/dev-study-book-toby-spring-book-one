@@ -29,11 +29,11 @@ class DaoFactory {
     }
 
     @Bean
-    fun userServiceImpl(dataSource: DataSource, mailSender: MailSender): UserService {
+    fun userServiceImpl(userDao: UserDao, userMailService: UserMailService): UserService {
         return UserServiceImpl(
-            userDao(dataSource),
+            userDao,
             UserLevelUpgradePolicyDefault(),
-            userMailService(mailSender)
+            userMailService
         )
 
 //        return UserServiceTx(
@@ -69,6 +69,7 @@ class DaoFactory {
         return TransactionAdvice(platformTransactionManager)
     }
 
+    // 등록하면 bean circular dependency error 발생
 //    @Bean
 //    fun transactionAdvisor(
 //        transactionPointcut: Pointcut,
@@ -80,6 +81,7 @@ class DaoFactory {
     @Bean
     fun userService(
         userServiceImpl: UserService,
+        transactionPointcut: Pointcut,
         transactionAdvice: Advice
     ): ProxyFactoryBean {
 
@@ -91,14 +93,6 @@ class DaoFactory {
 //        )
 
         val pfBean = ProxyFactoryBean()
-
-        val transactionPointcut = NameMatchMethodPointcut()
-        transactionPointcut.setMappedName("upgrade*")
-
-////        val transactionAdvice = TransactionAdvice(
-////            platformTransactionManager(dataSource)
-////        )
-
         pfBean.setTarget(userServiceImpl)
         pfBean.addAdvisor(DefaultPointcutAdvisor(transactionPointcut, transactionAdvice))
         return pfBean

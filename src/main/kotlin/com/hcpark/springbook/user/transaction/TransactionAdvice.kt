@@ -4,7 +4,6 @@ import org.aopalliance.intercept.MethodInterceptor
 import org.aopalliance.intercept.MethodInvocation
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.DefaultTransactionDefinition
-import java.lang.reflect.InvocationTargetException
 
 // Advice는 타겟 정보를 가지지 않는다! -> 싱글톤 등록 가능
 class TransactionAdvice(
@@ -18,9 +17,9 @@ class TransactionAdvice(
             val res = invocation.proceed()
             transactionManager.commit(status)
             return res
-        } catch (e: InvocationTargetException) {
+        } catch (e: Exception) {
             transactionManager.rollback(status)
-            throw e.targetException
+            throw e
         }
     }
 }
