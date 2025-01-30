@@ -4,7 +4,6 @@ import com.hcpark.springbook.user.service.UserLevelUpgradePolicyDefault
 import com.hcpark.springbook.user.service.UserMailService
 import com.hcpark.springbook.user.service.UserService
 import com.hcpark.springbook.user.service.UserServiceImpl
-import com.hcpark.springbook.user.service.UserServiceTx
 import com.hcpark.springbook.user.transaction.TransactionAdvice
 import org.aopalliance.aop.Advice
 import org.springframework.aop.Pointcut
@@ -29,18 +28,18 @@ class DaoFactory {
         }
     }
 
-    //    @Bean
+    @Bean
     fun userServiceImpl(dataSource: DataSource, mailSender: MailSender): UserService {
-        val userService = UserServiceImpl(
+        return UserServiceImpl(
             userDao(dataSource),
             UserLevelUpgradePolicyDefault(),
             userMailService(mailSender)
         )
 
-        return UserServiceTx(
-            platformTransactionManager(dataSource),
-            userService
-        )
+//        return UserServiceTx(
+//            platformTransactionManager(dataSource),
+//            userService
+//        )
     }
 
     @Bean
@@ -79,12 +78,10 @@ class DaoFactory {
 //    }
 
     @Bean
-    fun txProxyFactoryBean(dataSource: DataSource): ProxyFactoryBean {
-        val userService = UserServiceImpl(
-            userDao(dataSource),
-            UserLevelUpgradePolicyDefault(),
-            userMailService(mailSender())
-        )
+    fun userService(
+        userServiceImpl: UserService,
+        transactionAdvice: Advice
+    ): ProxyFactoryBean {
 
 //        return TxProxyFactoryBean(
 //            userService,
@@ -98,11 +95,11 @@ class DaoFactory {
         val transactionPointcut = NameMatchMethodPointcut()
         transactionPointcut.setMappedName("upgrade*")
 
-        val transactionAdvice = TransactionAdvice(
-            platformTransactionManager(dataSource)
-        )
+////        val transactionAdvice = TransactionAdvice(
+////            platformTransactionManager(dataSource)
+////        )
 
-        pfBean.setTarget(userService)
+        pfBean.setTarget(userServiceImpl)
         pfBean.addAdvisor(DefaultPointcutAdvisor(transactionPointcut, transactionAdvice))
         return pfBean
     }
