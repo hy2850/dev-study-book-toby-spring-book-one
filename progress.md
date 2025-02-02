@@ -30,3 +30,16 @@
   - programmatic : TC에서 TransactionManager 주입받아서 의도적으로 트랜잭션 시작; 트랜잭션 동기화, 롤백 러닝 테스트에 활용
 - ⭐️ 동일 클래스 내 다른 메소드 호출하면, 프록시 통해서 호출하는게 아니므로, AOP 기술 사용한 부가기능 적용 안됨
 - 새로운 개념을 배우면 러닝테스트를 꼭 만들자! Make learning tests whenever you encounter new terms and features
+
+### 20250202 일 - 간단히 코드보고 Ch5 복습, 스프링 doc 탐색
+
+Ch6 AOP 내용들이 아래 Spring doc에 다 나와있었네
+https://docs.spring.io/spring-framework/reference/core/aop.html
+
+Ch5 복습 - 추상화 & 테스트할 sut의 의존성 mocking해서 단위테스트 격리
+
+- `PlatformTransactionManager` 적용, 트랜잭션 동기화 & 추상화
+  - 추상화 : https://docs.spring.io/spring-framework/reference/data-access/transaction/strategies.html
+  - 선언적 트랜잭션 : https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative.html
+  - @Transactional : https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html
+- UserMailService mock 활용해서 격리 테스트
