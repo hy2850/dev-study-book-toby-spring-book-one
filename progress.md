@@ -68,14 +68,12 @@ OCP, DIP
 ```
 
 토비 스프링 Ch2
-
 - 유닛 테스트는 필수
 - 꼭 TDD 해라 (테스트 = 구현하기 전에 specification 틀을 코드로 작성하는 것, 계획 짜는 것)
 - 모르는 기능은 꼭 학습테스트 짜서 공부하기
 - 네거티브 테스트를 가장 먼저 만들어라
 
 토비 스프링 Ch3
-
 - 자주 바뀌는 코드(전략, 콜백)와 바뀌지 않고 계속 재사용되는 코드(템플릿)을 분리
 - 바뀌지 않는 틀/템플릿에, 바뀌는 코드의 구현체를 DI 함으로써 템플릿 코드 여러 번 재사용 (OCP 달성)
 - 전략패턴, 템플릿 콜백 패턴 활용
@@ -83,9 +81,16 @@ OCP, DIP
 <br>
 
 토비 스프링 Ch4 - 예외 핸들링
-
 - 예외 catch해서 씹거나, 무지성 throws는 ❌ (예외는 반드시 처리하거나, 로깅해서 개발자에게 알리기)
 - 예외 처리 방법 : 여기서 처리 못하면 throws / 예외 전환 or 예외 포장 (주로 checked -> unchecked로 바꿔버리기)
 - checked vs unchecked exception (RuntimeException)
   - 💡Kotlin은 unchecked exception 뿐이라, 코드 작업할게 없더라
 - example) How Spring translates different DB exception into it's own abstract 'DataAccessException' (unchecked)
+
+<br>
+
+### 20250204 화 - Ch7 p.557~584
+
+- 코드에 하드코딩된 SQL을 분리해보자
+- SQL을 XML 파일로 옮기고, XML 파일 읽어서 SQL 제공하는 sqlService 인터페이스 분리 & 구현체 개발 후 UserDao에 DI로 연결
+- XML 읽는 책임 && SQL 데이터 저장했다가 제공하는 책임 -> 서로 다른 책임 파악, 인터페이스 분리
