@@ -36,10 +36,56 @@
 Ch6 AOP 내용들이 아래 Spring doc에 다 나와있었네
 https://docs.spring.io/spring-framework/reference/core/aop.html
 
+
 Ch5 복습 - 추상화 & 테스트할 sut의 의존성 mocking해서 단위테스트 격리
 
 - `PlatformTransactionManager` 적용, 트랜잭션 동기화 & 추상화
   - 추상화 : https://docs.spring.io/spring-framework/reference/data-access/transaction/strategies.html
   - 선언적 트랜잭션 : https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative.html
   - @Transactional : https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html
-- UserMailService mock 활용해서 격리 테스트
+- 메일 전송 기능 구체 클래스를 mocking하기 위해, 직접 추상화 도입. 핵심 기능만 인터페이스로 빼서~
+
+<br>
+
+### 20250203 월 - 이전 챕터들 복습
+
+토비 스프링 Ch1
+
+```
+책임 = 변경, 수정이 일어날 때 함께 변하는 부분
+→ 별도 클래스로 분리
+
+서로 다른 책임을 가진 클래스끼리의 의존성은, 구체 클래스 말고 인터페이스 사용해서 느슨하게 연결 
+(한쪽의 구체 사항이 변경되어도, 인터페이스가 바뀐게 아닌 이상 다른쪽은 영향 받지 않도록)
+
+강한 응집성, 느슨한 결합
+OCP, DIP
+이걸 가능하게 도와주는게 스프링 DI (객체 생성과 런타임 의존관계 설정하는 책임을 스프링 컨테이너가 맡아줌)
+
+이걸 달성하면? 코드 변경과 수정이 훨씬 편하고 자유로워짐.
+변경에 영향받는 부분도 적을테고, 그 부분만 수정하고 TC 돌리면 끝.
+그게 아니면 repo 여기저기 코드를 다 일일이 찾아서 바꿔야 함.
+```
+
+토비 스프링 Ch2
+
+- 유닛 테스트는 필수
+- 꼭 TDD 해라 (테스트 = 구현하기 전에 specification 틀을 코드로 작성하는 것, 계획 짜는 것)
+- 모르는 기능은 꼭 학습테스트 짜서 공부하기
+- 네거티브 테스트를 가장 먼저 만들어라
+
+토비 스프링 Ch3
+
+- 자주 바뀌는 코드(전략, 콜백)와 바뀌지 않고 계속 재사용되는 코드(템플릿)을 분리
+- 바뀌지 않는 틀/템플릿에, 바뀌는 코드의 구현체를 DI 함으로써 템플릿 코드 여러 번 재사용 (OCP 달성)
+- 전략패턴, 템플릿 콜백 패턴 활용
+
+<br>
+
+토비 스프링 Ch4 - 예외 핸들링
+
+- 예외 catch해서 씹거나, 무지성 throws는 ❌ (예외는 반드시 처리하거나, 로깅해서 개발자에게 알리기)
+- 예외 처리 방법 : 여기서 처리 못하면 throws / 예외 전환 or 예외 포장 (주로 checked -> unchecked로 바꿔버리기)
+- checked vs unchecked exception (RuntimeException)
+  - 💡Kotlin은 unchecked exception 뿐이라, 코드 작업할게 없더라
+- example) How Spring translates different DB exception into it's own abstract 'DataAccessException' (unchecked)
