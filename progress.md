@@ -156,3 +156,11 @@ OCP, DIP
 
 - 3계층 아키텍처
 - 데이터 중심 방식 vs 오브젝트 중심 아키텍처
+
+<br>
+
+### 20250217 월 - Book2 Ch1 p.51~p.66
+
+- BeanDefinition (XML, Annotation 등 여러 소스에서 읽어오기 가능)
+- ApplicationContext 종류 (직접 인스턴스 생성할 일은 없지만, 항상 사용하고 있다)
+- 스프링 애플리케이션이 뜨는 방법
